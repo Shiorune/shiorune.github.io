@@ -65,6 +65,8 @@
     root.style.setProperty("--muted", isDark ? "#c6c9cd" : "#566069");
     root.style.setProperty("--line", isDark ? "#66696d" : "#c4c7c7");
     root.style.setProperty("--accent", isDark ? "#f1ca92" : "#5a5245");
+    // Match the approved A artwork on light themes, ensure contrast on dark themes.
+    root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54");
     root.style.setProperty("--reader-font", fonts[settings.font]);
     root.style.setProperty("--font-size", settings.fontSize + "px");
     root.style.setProperty("--line-height", settings.lineHeight.toFixed(1));
