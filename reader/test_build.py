@@ -53,6 +53,25 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
         ep_folder = dest / "works" / work_id / "episodes"
         assert ep_folder.is_dir()
         assert sorted(p.name for p in ep_folder.glob("*.html")) == sorted(names)
+        # Generated navigation follows actual published order, not sequential numbers.
+        ordered = sorted(names)
+        for i, filename in enumerate(ordered):
+            page_html = (ep_folder / filename).read_text(encoding="utf-8")
+            assert '<nav class="episode-end-navigation"' in page_html
+            assert page_html.index('<article class="prose">') < page_html.index('<nav class="episode-end-navigation"')
+            if i:
+                assert f'href="{ordered[i - 1]}" rel="prev"' in page_html
+                assert '<nav class="episode-top-navigation"' in page_html
+            else:
+                assert 'rel="prev"' not in page_html
+                assert '<nav class="episode-top-navigation"' not in page_html
+            if i + 1 < len(ordered):
+                assert f'id="episode-next-link" href="{ordered[i + 1]}" rel="next"' in page_html
+                assert 'id="episode-swipe-zone"' in page_html
+                assert 'ここを上にスワイプして次の話へ' in page_html
+            else:
+                assert 'id="episode-next-link"' not in page_html
+                assert 'id="episode-swipe-zone"' not in page_html
         assert (dest / "works" / work_id / "index.html").exists()
     assert not (dest / "works" / "_template").exists()
     assert not (dest / "works" / "draft").exists()
@@ -184,6 +203,21 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'localStorage.clear()' not in script
     assert 'localStorage.removeItem(KEY)' not in script
     assert "readerWidth" not in script
+    # Swipe handling must remain scoped to the page-end target, not the document.
+    assert 'el("episode-swipe-zone")' in script
+    assert 'swipeZone.addEventListener("pointerdown"' in script
+    assert 'swipeZone.addEventListener("pointercancel"' in script
+    assert 'swipeZone.addEventListener("pointerup"' in script
+    assert 'event.pointerType !== "touch"' in script
+    assert 'event.isPrimary' in script
+    assert 'dy > -70' in script
+    assert 'location.assign(nextChapter.href)' in script
+    assert 'cache.put(nextChapter.href, response.clone())' in script
+    assert "connection?.saveData" in script
+    assert ".episode-swipe-zone{" in css
+    assert "touch-action:pinch-zoom" in css
+    assert ".episode-next-link{" in css
+    assert ".episode-prev-link{" in css
     assert "if (scrollY >= 140) {" in script
     assert "save(LAST, {path, title})" in script
     # Dialogs must lock the underlying novel and restore the exact scroll position.
