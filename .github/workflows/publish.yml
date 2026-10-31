@@ -3,10 +3,6 @@ name: Publish Shiorune reader
 # Explicit only. Updating the private source repository never triggers this workflow.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/publish.yml'
 
 permissions:
   contents: read
