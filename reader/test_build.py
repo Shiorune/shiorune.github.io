@@ -174,8 +174,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css
     assert ".brand .brand-wordmark{" in css
     assert ".library-intro h1.library-wordmark{" in css
-    assert "width:132px;" in css
-    assert "width:min(100%,350px);" in css
+    assert "width:100px;" in css
+    assert "height:22.25px;" in css
+    assert "width:min(100%,240px);" in css
+    assert "font-size:clamp(24px,6vw,36px);" in css
+    assert "width:92px;flex-basis:92px;height:20.46px" in css
     assert "aspect-ratio:1115/248;" in css
     assert "color:var(--fg);" in css
     assert ".brand .brand-wordmark::after" in css
