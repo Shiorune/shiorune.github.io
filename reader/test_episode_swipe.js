@@ -40,7 +40,7 @@ function harness(options = {}) {
         return {async put(url, response) { cacheWrites.push([url, response]); }};
       }
     },
-    window: {requestIdleCallback: true},
+    window: {requestIdleCallback: true, caches: true},
     requestIdleCallback(fn) { scheduled.push(fn); },
     setTimeout() { throw Error("idle callback should be used"); }
   };
