@@ -429,3 +429,28 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 @media(max-width:374px){
   .brand .brand-wordmark{width:52px;flex-basis:52px;height:11.57px}
 }
+
+
+/* Navigation only after the text: browser scroll/pull-to-refresh elsewhere is native. */
+body[data-episode="true"] .reading-area{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.episode-top-navigation,.episode-end-navigation{max-width:680px;margin-left:auto;margin-right:auto;font-family:var(--ui-font)}
+.episode-top-navigation{display:flex;justify-content:flex-start;margin-bottom:8px}
+.episode-top-navigation .episode-prev-link{font-size:12px;color:var(--muted);min-height:40px}
+.episode-end-navigation{margin-top:24px;padding-top:15px;border-top:1px solid var(--line)}
+.episode-end-links{display:flex;justify-content:space-between;align-items:stretch;flex-wrap:wrap;gap:10px}
+.episode-prev-link{display:inline-flex;align-items:center;min-height:48px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;font-size:13px;color:var(--muted);font-weight:600;touch-action:manipulation}
+.episode-next-link{display:flex;gap:8px;align-items:center;margin-left:auto;min-height:58px;max-width:100%;min-width:0;padding:10px 13px;border-radius:10px;background:color-mix(in srgb,var(--fg) 6%,var(--bg));border:1px solid var(--line);color:var(--fg);touch-action:manipulation}
+.episode-next-link .episode-next-label{flex-shrink:0;font-size:12px;color:var(--muted);white-space:nowrap}
+.episode-next-link strong{font-size:13px;line-height:1.55;font-weight:650;overflow-wrap:anywhere;min-width:0}
+.episode-next-link>span:last-child{font-size:18px;color:var(--accent)}
+.episode-prev-link:active,.episode-next-link:active{opacity:.72}
+.episode-swipe-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:104px;margin-top:13px;border:1px dashed color-mix(in srgb,var(--fg) 21%,transparent);border-radius:12px;background:color-mix(in srgb,var(--fg) 3%,var(--bg));color:var(--muted);font-size:12px;font-weight:600;text-align:center;user-select:none;-webkit-user-select:none;touch-action:pinch-zoom}
+.episode-swipe-chevrons{display:block;font-size:19px;line-height:1;color:var(--accent);transform:rotate(0deg)}
+@media(max-width:540px){
+  .episode-end-navigation{margin-top:17px;padding-top:11px}
+  .episode-end-links{gap:7px}
+  .episode-prev-link{padding:8px 9px;font-size:12px}
+  .episode-next-link{min-height:55px;padding:8px 10px}
+  .episode-next-link strong{font-size:12px}
+  .episode-swipe-zone{min-height:100px;margin-top:11px}
+}
