@@ -221,6 +221,7 @@ def build() -> None:
     for name in ("reader.css", "reader.js"):
         shutil.copyfile(ROOT / "reader" / name, DEST / "assets" / name)
     shutil.copyfile(ROOT / "reader" / "icon.svg", DEST / "icon.svg")
+    shutil.copyfile(ROOT / "reader" / "wordmark-b.svg", DEST / "wordmark-b.svg")
     manifest = {
         "name": "Shiorune", "short_name": "Shiorune", "lang": "ja",
         "start_url": "./index.html", "scope": "./", "display": "standalone",
@@ -356,7 +357,7 @@ def build() -> None:
 
     # All public files are explicitly generated. Raw Markdown and indexes stay private.
     shell_urls = ["./", "./index.html", "./assets/reader.css",
-                  "./assets/reader.js", "./manifest.webmanifest", "./icon.svg", *toc_paths]
+                  "./assets/reader.js", "./manifest.webmanifest", "./icon.svg", "./wordmark-b.svg", *toc_paths]
     episode_urls = chapter_paths
     digest = hashlib.sha256(
         "".join(p.read_text(encoding="utf-8") for p in sorted(DEST.rglob("*")) if p.is_file()).encode()
