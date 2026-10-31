@@ -91,6 +91,16 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'class="work-progress-footer"' in home_html
     assert 'id="reading-summary"' in home_html
     assert 'id="completed-count"' in home_html
+    # Source order is also the keyboard/screen-reader order:
+    # title, synopsis, read actions, progress, then episode list.
+    assert home_html.index('<section class="work-hero"') < home_html.index('<section class="work-synopsis"')
+    assert home_html.index('<section class="work-synopsis"') < home_html.index('<div class="work-action-row"')
+    assert home_html.index('<div class="work-action-row"') < home_html.index('<section class="work-progress"')
+    assert home_html.index('<section class="work-progress"') < home_html.index('<section class="work-episodes-section"')
+    assert 'aria-label="読む"' in home_html
+    assert 'class="start-reading"' in home_html
+    assert 'id="continue-reading" hidden' in home_html
+    assert 'href="#episode-list-title"' in home_html
     # Reset must be explicit, confirmed and scoped to this novel.
     assert 'id="reset-reading"' in home_html
     assert 'id="reset-reading-dialog"' in home_html
@@ -195,7 +205,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-progress-footer{display:flex;" in css
     assert ".work-progress-actions button{min-height:40px;" in css
     # Work detail has an unboxed heading, even in night/custom themes.
-    assert ".work-hero{position:relative;padding:10px 0 22px;border-bottom:1px solid var(--line);background:transparent;color:var(--fg)}" in css
+    assert ".work-hero{position:relative;padding:10px 0 5px;background:transparent;color:var(--fg)}" in css
+    assert ".work-action-row{position:relative;z-index:1;display:flex;gap:10px;align-items:stretch;margin:15px 0 0;" in css
+    assert "  .work-action-row{margin-top:12px}" in css
     assert ".work-hero::after{" not in css
     assert ".work-action-row .start-reading{background:var(--fg);color:var(--bg);box-shadow:none}" in css
     assert ".work-action-row .continue{display:inline-flex;margin:0;background:transparent;color:var(--fg);border:1px solid var(--line)}" in css
