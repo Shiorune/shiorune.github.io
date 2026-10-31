@@ -268,7 +268,9 @@ def build() -> None:
                     '<span class="chapter-turn-title">' + html.escape(next_ep["name"]) + '</span></a>')
             chapter_turn = (
                 '<nav class="chapter-turn" aria-label="前後のエピソード">' +
-                "".join(turn_links) + '</nav>'
+                "".join(turn_links) + '</nav>' +
+                ('<p class="chapter-swipe-hint">一番下から上へもう一度スワイプすると次の話へ</p>'
+                 if next_ep else '')
                 if turn_links else "")
             body = f'<article class="prose">{ep["html"]}</article>' + chapter_turn
             page = document(ep["name"], body, asset_prefix="../../../",
