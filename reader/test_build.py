@@ -221,6 +221,13 @@ def main() -> None:
         (draft / "第001話.md").write_text(
             "# 第001話「未公開」\n\nSECRET-DRAFT\n", encoding="utf-8")
         check_build(source, dest, {"revalna": ["001.html", "003.html"]})
+        # New site offers explicit, client-only import of legacy reading data.
+        site = (dest / "index.html").read_text(encoding="utf-8")
+        assert 'id="import-old-reading"' in site
+        assert 'src="./assets/migrate.js"' in site
+        assert (dest / "assets" / "migrate.js").exists()
+        assert './assets/migrate.js' in (dest / "sw.js").read_text(encoding="utf-8")
+
         chapter = (dest / "works" / "revalna" / "episodes" / "001.html").read_text(encoding="utf-8")
         assert "ランダムは1回だけ" in chapter
         assert "　本文です。" in chapter
