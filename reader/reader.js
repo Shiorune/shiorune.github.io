@@ -241,6 +241,45 @@
     }, {passive: true});
     window.addEventListener("resize", updateProgress, {passive: true});
     updateProgress();
+
+    // The next chapter is also available by a normal link. On touch devices,
+    // an intentional SECOND upward swipe begun at the very bottom advances it.
+    // Starting a swipe higher in the article must never change chapters.
+    const nextChapterLink = document.querySelector(".chapter-turn-next[href]");
+    if (nextChapterLink) {
+      const advance = () => {
+        save(progressKey, {percent: 100, finished: true});
+        save(positionKey, Math.max(0, Math.round(scrollY)));
+        save(LAST, {
+          path: new URL(nextChapterLink.href, location.href).pathname,
+          title: nextChapterLink.querySelector(".chapter-turn-title")?.textContent?.trim() || title
+        });
+      };
+      nextChapterLink.addEventListener("click", advance);
+      const atPageEnd = () =>
+        document.documentElement.scrollHeight - innerHeight - scrollY <= 12;
+      let start = null;
+      const isControl = target => target instanceof Element &&
+        !!target.closest("a,button,input,select,textarea,summary,dialog,[role=button]");
+      document.addEventListener("touchstart", event => {
+        start = null;
+        if (openOverlays || event.touches.length !== 1 || !atPageEnd() ||
+            isControl(event.target)) return;
+        start = {x: event.touches[0].clientX, y: event.touches[0].clientY};
+      }, {passive: true});
+      document.addEventListener("touchend", event => {
+        if (!start || openOverlays || !atPageEnd() ||
+            event.changedTouches.length !== 1) { start = null; return; }
+        const dy = start.y - event.changedTouches[0].clientY;
+        const dx = Math.abs(start.x - event.changedTouches[0].clientX);
+        start = null;
+        // Long, predominantly vertical deliberate upward gesture only.
+        if (dy < 110 || dx > dy * 0.6) return;
+        advance();
+        location.assign(nextChapterLink.href);
+      }, {passive: true});
+      document.addEventListener("touchcancel", () => { start = null; }, {passive: true});
+    }
   } else {
     const continuation = el("continue-reading");
     const entries = [...document.querySelectorAll(".work-episodes a")];
