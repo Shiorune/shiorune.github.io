@@ -218,7 +218,7 @@ def build() -> None:
         shutil.rmtree(DEST)
     (DEST / "assets").mkdir(parents=True)
     (DEST / "works").mkdir()
-    for name in ("reader.css", "reader.js", "migrate.js"):
+    for name in ("reader.css", "reader.js"):
         shutil.copyfile(ROOT / "reader" / name, DEST / "assets" / name)
     shutil.copyfile(ROOT / "reader" / "icon.svg", DEST / "icon.svg")
     manifest = {
@@ -350,19 +350,13 @@ def build() -> None:
                '<div class="library-intro"><p class="eyebrow">SHIORUNE</p>'
                '<h1>Shiorune</h1></div>'
                f'<div class="library-heading"><h2>作品一覧</h2><span>{len(works)}作品</span></div>'
-               '<ul class="work-list">' + "".join(library_items) + '</ul>'
-               '<section class="migration-panel" aria-labelledby="migration-title">'
-               '<h2 id="migration-title">以前のVeluneを利用していた方へ</h2>'
-               '<p>旧サイトに保存した読書状況・フォント・背景の設定を、このブラウザへ引き継げます。</p>'
-               '<button type="button" id="import-old-reading">旧Veluneから読書記録を引き継ぐ</button>'
-               '<p id="import-status" role="status" aria-live="polite"></p>'
-               '</section><script defer src="./assets/migrate.js"></script></section>')
+               '<ul class="work-list">' + "".join(library_items) + '</ul></section>')
     (DEST / "index.html").write_text(
         document("作品一覧", library, asset_prefix="./", is_episode=False), encoding="utf-8")
 
     # All public files are explicitly generated. Raw Markdown and indexes stay private.
     shell_urls = ["./", "./index.html", "./assets/reader.css",
-                  "./assets/reader.js", "./assets/migrate.js", "./manifest.webmanifest", "./icon.svg", *toc_paths]
+                  "./assets/reader.js", "./manifest.webmanifest", "./icon.svg", *toc_paths]
     episode_urls = chapter_paths
     digest = hashlib.sha256(
         "".join(p.read_text(encoding="utf-8") for p in sorted(DEST.rglob("*")) if p.is_file()).encode()
