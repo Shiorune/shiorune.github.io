@@ -262,8 +262,8 @@ def build() -> None:
             '</a></li>'
             for ep in episodes)
         # Native details lets visitors expand long descriptions without JavaScript.
-        if description and len(description) > 160:
-            excerpt = html.escape(description[:156].rstrip() + "…")
+        if description and len(description) > 96:
+            excerpt = html.escape(description[:92].rstrip() + "…")
             overview = (
                 '<section class="work-synopsis" aria-labelledby="work-overview-title">'
                 '<h2 id="work-overview-title">あらすじ</h2>'
@@ -306,10 +306,10 @@ def build() -> None:
             '<div class="work-progress-track" role="progressbar" aria-label="読了した話数"'
             f' aria-valuemin="0" aria-valuemax="{len(episodes)}" aria-valuenow="0">'
             '<span id="work-progress-bar"></span></div>'
-            '<p id="reading-summary">まだ読んだ話がありません。</p>'
+            '<div class="work-progress-footer"><p id="reading-summary">まだ読んだ話がありません。</p>'
             '<div class="work-progress-actions">'
             '<button type="button" id="reset-reading" aria-haspopup="dialog"'
-            ' aria-controls="reset-reading-dialog">読書状況をリセット</button></div>'
+            ' aria-controls="reset-reading-dialog">読書状況をリセット</button></div></div>'
             '</section>'
             '<dialog id="reset-reading-dialog" aria-labelledby="reset-reading-title"'
             ' aria-describedby="reset-reading-message">'

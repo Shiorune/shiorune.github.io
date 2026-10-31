@@ -88,6 +88,8 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'class="work-hero"' in home_html
     assert 'class="start-reading"' in home_html
     assert 'class="work-progress-track"' in home_html
+    assert 'class="work-progress-footer"' in home_html
+    assert 'id="reading-summary"' in home_html
     assert 'id="completed-count"' in home_html
     # Reset must be explicit, confirmed and scoped to this novel.
     assert 'id="reset-reading"' in home_html
@@ -122,6 +124,8 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'class="synopsis-expander"' in home_html
     assert 'すべて表示' in home_html
     assert 'class="synopsis-full"' in home_html
+    assert 'class="synopsis-excerpt"' in home_html
+    assert 'class="synopsis-toggle"' in home_html
     assert '&lt;script&gt;' in home_html  # HTML-escaped user-supplied description
     assert '<script>private</script>' not in home_html
     # Settings should stay reachable even on short phone viewports.
@@ -176,12 +180,20 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert "color:var(--brand-ink,var(--fg));" in css
     assert 'root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54")' in script
     assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css
-    assert "flex:0 0 68px;" in css
-    assert "width:68px;" in css
-    assert "height:15.13px;" in css
+    assert "flex:0 0 56px;" in css
+    assert "width:56px;" in css
+    assert "height:12.46px;" in css
     assert ".brand .wordmark-fallback{" in css
-    assert "font-size:12px;" in css
-    assert "width:62px;flex-basis:62px;height:13.8px" in css
+    assert "font-size:11px;" in css
+    assert "width:52px;flex-basis:52px;height:11.57px" in css
+    # The work synopsis and progress stay compact while still showing summary and reset.
+    assert ".work-synopsis{padding:15px 0 13px;" in css
+    assert ".synopsis-expander summary{cursor:pointer;display:grid;" in css
+    assert "-webkit-line-clamp:2" in css
+    assert ".work-progress{padding:10px 0 12px;margin:9px 0 13px;border:0;" in css
+    assert ".work-progress-track{height:4px;" in css
+    assert ".work-progress-footer{display:flex;" in css
+    assert ".work-progress-actions button{min-height:40px;" in css
     # Work detail has an unboxed heading, even in night/custom themes.
     assert ".work-hero{position:relative;padding:10px 0 22px;border-bottom:1px solid var(--line);background:transparent;color:var(--fg)}" in css
     assert ".work-hero::after{" not in css

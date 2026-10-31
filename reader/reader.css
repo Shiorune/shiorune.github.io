@@ -279,16 +279,17 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .work-action-row .start-reading:active{opacity:.82}
 .work-action-row .continue{display:inline-flex;margin:0;background:transparent;color:var(--fg);border:1px solid var(--line)}
 .work-action-row a[hidden]{display:none!important}
-.work-synopsis{padding:26px 1px 22px;border-bottom:1px solid var(--line)}
-.work-synopsis h2{font-size:18px;line-height:1.4;font-weight:750;margin:0 0 12px;letter-spacing:.015em}
-.work-synopsis p{margin:0;line-height:1.95;font-size:14px;color:var(--fg);white-space:pre-line;overflow-wrap:anywhere;letter-spacing:.015em}
-.work-progress{padding:22px 20px 18px;margin:19px 0 24px;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));border-radius:13px;background:color-mix(in srgb,var(--accent) 6%,var(--bg))}
-.work-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;line-height:1.5}
-.work-progress-heading strong{font-size:14px;font-weight:750}
-.work-progress-heading span{font-size:13px;color:var(--accent);font-variant-numeric:tabular-nums}
-.work-progress-track{height:7px;border-radius:99px;background:color-mix(in srgb,var(--fg) 13%,var(--bg));overflow:hidden;margin:14px 0 8px}
+.work-synopsis{padding:15px 0 13px;border-bottom:1px solid var(--line)}
+.work-synopsis h2{font-size:15px;line-height:1.4;font-weight:750;margin:0 0 6px;letter-spacing:.015em}
+.work-synopsis p{margin:0;line-height:1.75;font-size:13px;color:var(--fg);white-space:pre-line;overflow-wrap:anywhere;letter-spacing:.015em}
+.work-progress{padding:10px 0 12px;margin:9px 0 13px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+.work-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.4}
+.work-progress-heading strong{font-size:13px;font-weight:750}
+.work-progress-heading span{font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums}
+.work-progress-track{height:4px;border-radius:99px;background:color-mix(in srgb,var(--fg) 13%,var(--bg));overflow:hidden;margin:9px 0 4px}
 .work-progress-track>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#bf9869,#d9b985);border-radius:99px;transition:width .2s ease}
-.work-progress>p{margin:0;font-size:12px;color:var(--muted);line-height:1.6}
+.work-progress-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.work-progress-footer>p{margin:0;font-size:11px;color:var(--muted);line-height:1.5;min-width:0}
 .work-episodes-section{margin-top:22px}
 .work-episode-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;border-bottom:2px solid var(--accent);padding:0 0 12px}
 .work-episode-heading>div>p{font-size:10px;letter-spacing:.18em;color:var(--muted);margin:0 0 6px}
@@ -320,8 +321,8 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   .work-meta span+span::before{margin-right:7px}
   .work-action-row{margin-top:18px}
   .work-action-row a{flex:1 1 155px;padding:11px 12px;font-size:13px;min-height:46px}
-  .work-synopsis{padding-top:22px}
-  .work-progress{padding:17px 15px;margin:18px 0 20px}
+  .work-synopsis{padding-top:13px}
+  .work-progress{padding:9px 0 11px;margin:7px 0 11px}
   .work-episodes li a{padding-left:5px;padding-right:5px}
 }
 
@@ -343,15 +344,15 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 @media(max-width:400px){.shiorune-library .work-card{gap:11px}.shiorune-library .work-card-cover{width:62px;height:82px}.shiorune-library .work-card-cover img{width:42px;height:42px}}
 
 /* Synopsis: no long wall of text on initial open; expand without JavaScript. */
-.synopsis-expander{font-size:14px;line-height:1.9;min-width:0}
-.synopsis-expander summary{cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:7px;list-style:none;touch-action:manipulation;min-height:44px}
+.synopsis-expander{font-size:13px;line-height:1.7;min-width:0}
+.synopsis-expander summary{cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;list-style:none;touch-action:manipulation;min-height:44px}
 .synopsis-expander summary::-webkit-details-marker{display:none}
-.synopsis-excerpt{display:block;line-height:1.85;color:var(--fg);overflow-wrap:anywhere}
-.synopsis-toggle{display:inline-flex;align-items:center;font-size:12px;min-height:28px;color:var(--accent);font-weight:750}
+.synopsis-excerpt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.65;color:var(--fg);overflow-wrap:anywhere}
+.synopsis-toggle{display:inline-flex;align-items:center;font-size:11px;min-height:44px;color:var(--accent);font-weight:700;white-space:nowrap}
 .synopsis-expander[open] .synopsis-excerpt{display:none}
 .synopsis-expander[open] .synopsis-toggle{font-size:0}
 .synopsis-expander[open] .synopsis-toggle::after{content:"閉じる ↑";font-size:12px}
-.synopsis-expander .synopsis-full{margin:10px 0 0;line-height:1.95;white-space:pre-line}
+.synopsis-expander .synopsis-full{margin:5px 0 0;line-height:1.75;white-space:pre-line}
 .open-episode-list{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;border:1px solid var(--line);color:var(--fg);background:transparent;border-radius:10px;font-size:13px;font-weight:700;padding:11px 15px}
 .open-episode-list:hover,.open-episode-list:focus-visible{background:color-mix(in srgb,var(--fg) 6%,var(--bg))}
 .work-hero-main{display:block}
@@ -364,8 +365,8 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 
 
 /* Per-work reading status reset is deliberately secondary to starting/continuing. */
-.work-progress-actions{display:flex;justify-content:flex-end;margin-top:13px}
-.work-progress-actions button{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--muted);font-size:12px;font-weight:650;touch-action:manipulation}
+.work-progress-actions{display:flex;justify-content:flex-end;margin:0;flex-shrink:0}
+.work-progress-actions button{min-height:40px;padding:6px 7px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:11px;font-weight:650;touch-action:manipulation}
 .work-progress-actions button:hover,.work-progress-actions button:focus-visible{background:color-mix(in srgb,var(--fg) 7%,transparent);color:var(--fg)}
 #reset-reading-dialog{position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(420px,calc(100vw - 28px));max-width:none;max-height:calc(100dvh - 32px);overflow-y:auto;padding:0;border:1px solid var(--line);border-radius:16px;background:var(--bg);color:var(--fg);box-shadow:0 18px 55px #0005}
 #reset-reading-dialog::backdrop{background:#0009}
@@ -380,15 +381,15 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
 
 /* Approved A logo lettering, now only in the header. Keep the original
-   vector artwork and theme-aware text color, with a compact 68px footprint. */
+   vector artwork and theme-aware text color, with a compact 56px footprint. */
 .brand .brand-wordmark{
   position:relative;
   display:inline-flex;
   justify-content:center;
   align-items:center;
-  flex:0 0 68px;
-  width:68px;
-  height:15.13px;
+  flex:0 0 56px;
+  width:56px;
+  height:12.46px;
   color:var(--brand-ink,var(--fg));
   white-space:nowrap;
 }
@@ -396,7 +397,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   display:inline-block;
   color:inherit;
   font-family:Georgia,"Times New Roman",serif;
-  font-size:12px;
+  font-size:11px;
   font-weight:400;
   font-style:normal;
   line-height:1.1;
@@ -426,5 +427,5 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   }
 }
 @media(max-width:374px){
-  .brand .brand-wordmark{width:62px;flex-basis:62px;height:13.8px}
+  .brand .brand-wordmark{width:52px;flex-basis:52px;height:11.57px}
 }
