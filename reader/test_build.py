@@ -39,7 +39,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'aria-label="Shiorune 作品一覧へ"' in root_html
     # The app icon remains the same; only the typographic wordmark changes.
     assert 'class="brand-wordmark"' in root_html
-    assert 'class="brand-wordmark-accent"' in root_html
+    assert 'class="wordmark-i"' in root_html
+    assert 'brand-wordmark-accent' not in root_html
+    assert "A PLACE BETWEEN PAGES" in root_html
     assert 'class="library-wordmark"' in root_html
     assert '読む、見つかる、好きがふえる。' not in root_html
 
@@ -159,6 +161,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-episodes .episode-status{" in css
     assert ".brand img{" in css
     assert ".brand .brand-wordmark{" in css
+    assert ".brand-wordmark .wordmark-i::after" in css
+    assert "font-style:normal;font-weight:500" in css
+    assert ".brand .brand-wordmark-accent" not in css
+    assert "font-style:italic" not in css
+    assert ".library-intro h1.library-wordmark::after" not in css
     assert ".library-intro h1.library-wordmark{" in css
     assert "#e1d4c1,#f6efe2" in css
     assert ".work-hero{" in css
