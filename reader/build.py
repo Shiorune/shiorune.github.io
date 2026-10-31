@@ -160,7 +160,7 @@ def document(title: str, body: str, *, asset_prefix: str, is_episode: bool, toc_
 <link rel="manifest" href="{asset_prefix}manifest.webmanifest"><link rel="icon" href="{asset_prefix}icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{asset_prefix}assets/reader.css"><title>{html.escape(title)} - {TITLE}</title></head>
 <body data-episode="{'true' if is_episode else 'false'}">
-<header class="topbar"><a class="brand" href="{asset_prefix}index.html" aria-label="Shiorune 作品一覧へ"><img src="{asset_prefix}icon.svg" alt="" aria-hidden="true" width="28" height="28"><span class="brand-wordmark" aria-hidden="true"><span class="wordmark-fallback">Shiorune</span><span class="wordmark-lettering"></span><span class="wordmark-spark"></span></span></a><div class="topbar-controls"><span class="offline-state" id="offline-state" aria-live="polite"></span>{toc_button}<button id="open-settings" type="button" class="icon-btn" aria-label="表示設定">Aa</button></div></header>
+<header class="topbar"><a class="brand" href="{asset_prefix}index.html" aria-label="Shiorune 作品一覧へ"><img src="{asset_prefix}icon.svg" alt="" aria-hidden="true" width="28" height="28"><span class="brand-wordmark" aria-hidden="true">SHIORUNE</span></a><div class="topbar-controls"><span class="offline-state" id="offline-state" aria-live="polite"></span>{toc_button}<button id="open-settings" type="button" class="icon-btn" aria-label="表示設定">Aa</button></div></header>
 <main class="reading-area">{body}</main>
 {toc_dialog}
 {settings}<div class="progress-track" id="progress-track" aria-hidden="true"></div>
@@ -221,7 +221,6 @@ def build() -> None:
     for name in ("reader.css", "reader.js"):
         shutil.copyfile(ROOT / "reader" / name, DEST / "assets" / name)
     shutil.copyfile(ROOT / "reader" / "icon.svg", DEST / "icon.svg")
-    shutil.copyfile(ROOT / "reader" / "wordmark.svg", DEST / "wordmark.svg")
     manifest = {
         "name": "Shiorune", "short_name": "Shiorune", "lang": "ja",
         "start_url": "./index.html", "scope": "./", "display": "standalone",
@@ -348,8 +347,8 @@ def build() -> None:
         total_episodes += len(episodes)
 
     library = (f'<section class="home shiorune-library">'
-               '<div class="library-intro"><p class="eyebrow">A PLACE BETWEEN PAGES</p>'
-               '<h1 class="library-wordmark" aria-label="Shiorune"><span class="wordmark-fallback">Shiorune</span><span class="wordmark-lettering" aria-hidden="true"></span><span class="wordmark-spark" aria-hidden="true"></span></h1></div>'
+               '<div class="library-intro">'
+               '<h1 class="library-wordmark" aria-label="Shiorune">SHIORUNE</h1></div>'
                f'<div class="library-heading"><h2>作品一覧</h2><span>{len(works)}作品</span></div>'
                '<ul class="work-list">' + "".join(library_items) + '</ul></section>')
     (DEST / "index.html").write_text(
@@ -357,7 +356,7 @@ def build() -> None:
 
     # All public files are explicitly generated. Raw Markdown and indexes stay private.
     shell_urls = ["./", "./index.html", "./assets/reader.css",
-                  "./assets/reader.js", "./manifest.webmanifest", "./icon.svg", "./wordmark.svg", *toc_paths]
+                  "./assets/reader.js", "./manifest.webmanifest", "./icon.svg", *toc_paths]
     episode_urls = chapter_paths
     digest = hashlib.sha256(
         "".join(p.read_text(encoding="utf-8") for p in sorted(DEST.rglob("*")) if p.is_file()).encode()
