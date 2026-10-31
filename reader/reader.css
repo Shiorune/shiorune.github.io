@@ -391,9 +391,9 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   display:inline-flex;
   justify-content:center;
   align-items:center;
-  flex:0 0 132px;
-  width:132px;
-  height:29.4px;
+  flex:0 0 100px;
+  width:100px;
+  height:22.25px;
   color:var(--brand-ink,var(--fg));
   white-space:nowrap;
 }
@@ -402,7 +402,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   display:flex;
   justify-content:center;
   align-items:center;
-  width:min(100%,350px);
+  width:min(100%,240px);
   aspect-ratio:1115/248;
   height:auto;
   margin:0 auto;
@@ -410,7 +410,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   font-family:Georgia,"Times New Roman",serif;
   font-weight:400;
   font-style:normal;
-  font-size:clamp(34px,8vw,64px);
+  font-size:clamp(24px,6vw,36px);
   letter-spacing:-.035em;
   line-height:1;
 }
@@ -424,7 +424,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   line-height:1.1;
   letter-spacing:-.035em;
 }
-.brand .wordmark-fallback{font-size:20px}
+.brand .wordmark-fallback{font-size:16px}
 @supports ((-webkit-mask-image:url("../wordmark-a.svg")) or (mask-image:url("../wordmark-a.svg"))){
   .brand .wordmark-fallback,.library-wordmark .wordmark-fallback{display:none}
   .brand .brand-wordmark::before,.library-intro h1.library-wordmark::before{
@@ -449,5 +449,5 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   }
 }
 @media(max-width:374px){
-  .brand .brand-wordmark{width:118px;flex-basis:118px;height:26.25px}
+  .brand .brand-wordmark{width:92px;flex-basis:92px;height:20.46px}
 }
