@@ -243,13 +243,36 @@ def build() -> None:
         description = work["description"]
         book_dir = DEST / "works" / work_id
         (book_dir / "episodes").mkdir(parents=True)
-        for ep in episodes:
+        for ep_index, ep in enumerate(episodes):
             toc_items = "\n".join(
                 '<li><a href="' + entry["slug"] + '.html"' +
                 (' aria-current="page"' if entry["slug"] == ep["slug"] else '') +
                 '>' + html.escape(entry["name"]) + '</a></li>'
                 for entry in episodes)
-            body = f'<article class="prose">{ep["html"]}</article>'
+            # Bottom-of-article navigation never guesses an episode number: gaps
+            # and later deletions are handled by the ordered published list.
+            previous_ep = episodes[ep_index - 1] if ep_index > 0 else None
+            next_ep = episodes[ep_index + 1] if ep_index + 1 < len(episodes) else None
+            turn_links = []
+            if previous_ep:
+                turn_links.append(
+                    '<a class="chapter-turn-link chapter-turn-prev" href="' +
+                    previous_ep["slug"] + '.html" rel="prev">'
+                    '<span class="chapter-turn-label">← 前の話</span>'
+                    '<span class="chapter-turn-title">' + html.escape(previous_ep["name"]) + '</span></a>')
+            if next_ep:
+                turn_links.append(
+                    '<a class="chapter-turn-link chapter-turn-next" href="' +
+                    next_ep["slug"] + '.html" rel="next">'
+                    '<span class="chapter-turn-label">次の話 →</span>'
+                    '<span class="chapter-turn-title">' + html.escape(next_ep["name"]) + '</span></a>')
+            chapter_turn = (
+                '<nav class="chapter-turn" aria-label="前後のエピソード">' +
+                "".join(turn_links) + '</nav>' +
+                ('<p class="chapter-swipe-hint">一番下から上へもう一度スワイプすると次の話へ</p>'
+                 if next_ep else '')
+                if turn_links else "")
+            body = f'<article class="prose">{ep["html"]}</article>' + chapter_turn
             page = document(ep["name"], body, asset_prefix="../../../",
                             is_episode=True, toc_items=toc_items, work_title=title)
             dest = book_dir / "episodes" / f'{ep["slug"]}.html'

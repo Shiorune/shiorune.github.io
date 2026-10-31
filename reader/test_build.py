@@ -83,6 +83,22 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'class="toc-trigger"' in ep_html
     assert 'aria-current="page"' in ep_html
     assert '<nav class="chapter-nav"' not in ep_html
+    # In-flow links, not a sticky footer. Link the actual sorted chapters,
+    # never a hardcoded episode count or an assumed numeric successor.
+    for work_id, names in chapters.items():
+        for i, name in enumerate(names):
+            page = (dest / "works" / work_id / "episodes" / name).read_text(encoding="utf-8")
+            has_prev, has_next = i > 0, i + 1 < len(names)
+            assert ('class="chapter-turn-link chapter-turn-prev"' in page) == has_prev
+            assert ('class="chapter-turn-link chapter-turn-next"' in page) == has_next
+            assert ('class="chapter-swipe-hint"' in page) == has_next
+            if has_prev:
+                assert f'href="{names[i-1]}" rel="prev"' in page
+            if has_next:
+                assert f'href="{names[i+1]}" rel="next"' in page
+            assert '<footer class="chapter-turn"' not in page
+            if has_prev or has_next:
+                assert page.index('<article class="prose">') < page.index('<nav class="chapter-turn"')
     home_html = (dest / "works" / "revalna" / "index.html").read_text(encoding="utf-8")
     assert '<details class="offline-tools">' in home_html
     assert 'class="work-hero"' in home_html
@@ -238,6 +254,15 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".prose{max-width:680px" in css
     assert ".synopsis-expander" in css
     assert "overscroll-behavior:contain" in css
+    assert ".chapter-turn{max-width:680px" in css
+    assert ".chapter-turn-next{grid-column:2;text-align:right}" in css
+    assert "chapter-turn-link:hover" in css
+    assert 'document.querySelector(".chapter-turn-next[href]")' in script
+    assert 'document.addEventListener("touchstart"' in script
+    assert 'document.addEventListener("touchend"' in script
+    assert "dy < 110 || dx > dy * 0.6" in script
+    assert "openOverlays || event.touches.length !== 1 || !atPageEnd()" in script
+    assert "save(progressKey, {percent: 100, finished: true})" in script
     assert "function openReaderOverlay(element)" in script
     assert "window.scrollTo({top: lockedReaderY" in script
     assert 'dialog?.addEventListener("close", releaseReaderScroll)' in script

@@ -429,3 +429,14 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 @media(max-width:374px){
   .brand .brand-wordmark{width:52px;flex-basis:52px;height:11.57px}
 }
+
+/* In-flow adjacent chapter controls. Never a sticky footer or extra TOC. */
+.chapter-turn{max-width:680px;margin:48px auto 0;padding-top:14px;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;font-family:var(--ui-font)}
+.chapter-turn-link{display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:64px;min-width:0;padding:10px 8px;border-radius:9px;color:var(--fg);touch-action:manipulation}
+.chapter-turn-link:hover,.chapter-turn-link:active{background:color-mix(in srgb,var(--fg) 6%,transparent)}
+.chapter-turn-next{grid-column:2;text-align:right}
+.chapter-turn-label{font-size:12px;line-height:1.5;font-weight:750;color:var(--accent)}
+.chapter-turn-title{font-size:12px;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere;color:var(--muted)}
+.chapter-swipe-hint{max-width:680px;margin:5px auto 0;text-align:right;color:var(--muted);font-family:var(--ui-font);font-size:10px;line-height:1.5}
+@media(pointer:fine){.chapter-swipe-hint{display:none}}
+@media(max-width:374px){.chapter-turn{gap:6px}.chapter-turn-link{padding:9px 3px}}
