@@ -1,0 +1,84 @@
+name: Publish Shiorune reader
+
+# Explicit only. Updating the private source repository never triggers this workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: velune-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Checkout public reader
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check private repository token
+        env:
+          SOURCE_TOKEN: ${{ secrets.LYTHIA_READ_TOKEN || secrets.REVALNA_READ_TOKEN }}
+        run: |
+          if [ -z "$SOURCE_TOKEN" ]; then
+            echo "::error::Set LYTHIA_READ_TOKEN (or legacy REVALNA_READ_TOKEN) as an Actions secret first."
+            exit 1
+          fi
+
+      - name: Checkout private work library
+        uses: actions/checkout@v4
+        with:
+          repository: pino1472/Lythia
+          ref: main
+          path: _source
+          token: ${{ secrets.LYTHIA_READ_TOKEN || secrets.REVALNA_READ_TOKEN }}
+          persist-credentials: false
+          sparse-checkout: |
+            works
+          sparse-checkout-cone-mode: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install generator dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Test novel-only build and exclusions
+        run: |
+          python reader/test_build.py
+          node --check reader/reader.js
+          node reader/test_reset.js
+
+      - name: Generate all published works and their episodes
+        run: |
+          python reader/build.py
+          test -f dist/index.html
+          test -f dist/sw.js
+          test -f dist/works/revalna/index.html
+          if find dist -type f \( -name '*.md' -o -name '*.yml' -o -name '*.yaml' \) | grep -q .; then
+            echo "::error::Unexpected source or metadata file in public output."
+            exit 1
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload ONLY the generated public pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
