@@ -41,7 +41,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert '<span class="brand-wordmark" aria-hidden="true"><span class="wordmark-fallback">Shiorune</span></span>' in root_html
     assert 'class="library-intro"' not in root_html
     assert 'class="library-wordmark"' not in root_html
-    assert '<div class="library-heading"><h2>作品一覧</h2>' in root_html
+    assert '<div class="library-heading"><h1>作品一覧</h1>' in root_html
+    assert root_html.count("<h1") == 1
+    assert ".library-heading h1{" in (dest / "assets" / "reader.css").read_text(encoding="utf-8")
     assert root_html.count('class="brand-wordmark"') == 1
     assert "SHIORUNE" not in root_html
     assert 'A PLACE BETWEEN PAGES' not in root_html
