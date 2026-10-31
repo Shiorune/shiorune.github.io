@@ -160,7 +160,7 @@ def document(title: str, body: str, *, asset_prefix: str, is_episode: bool, toc_
 <link rel="manifest" href="{asset_prefix}manifest.webmanifest"><link rel="icon" href="{asset_prefix}icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{asset_prefix}assets/reader.css"><title>{html.escape(title)} - {TITLE}</title></head>
 <body data-episode="{'true' if is_episode else 'false'}">
-<header class="topbar"><a class="brand" href="{asset_prefix}index.html" aria-label="Shiorune 作品一覧へ"><img src="{asset_prefix}icon.svg" alt="" aria-hidden="true" width="28" height="28"><span>Shiorune</span></a><div class="topbar-controls"><span class="offline-state" id="offline-state" aria-live="polite"></span>{toc_button}<button id="open-settings" type="button" class="icon-btn" aria-label="表示設定">Aa</button></div></header>
+<header class="topbar"><a class="brand" href="{asset_prefix}index.html" aria-label="Shiorune 作品一覧へ"><img src="{asset_prefix}icon.svg" alt="" aria-hidden="true" width="28" height="28"><span class="brand-wordmark">Shio<span class="brand-wordmark-accent">rune</span></span></a><div class="topbar-controls"><span class="offline-state" id="offline-state" aria-live="polite"></span>{toc_button}<button id="open-settings" type="button" class="icon-btn" aria-label="表示設定">Aa</button></div></header>
 <main class="reading-area">{body}</main>
 {toc_dialog}
 {settings}<div class="progress-track" id="progress-track" aria-hidden="true"></div>
@@ -348,7 +348,7 @@ def build() -> None:
 
     library = (f'<section class="home shiorune-library">'
                '<div class="library-intro"><p class="eyebrow">SHIORUNE</p>'
-               '<h1>Shiorune</h1></div>'
+               '<h1 class="library-wordmark">Shio<span>rune</span></h1></div>'
                f'<div class="library-heading"><h2>作品一覧</h2><span>{len(works)}作品</span></div>'
                '<ul class="work-list">' + "".join(library_items) + '</ul></section>')
     (DEST / "index.html").write_text(

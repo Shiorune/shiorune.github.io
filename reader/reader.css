@@ -327,9 +327,9 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 
 /* A richer library with small graphic cover thumbnails and short synopses. */
 .shiorune-library{max-width:810px}
-.library-intro{border-radius:16px;padding:28px 20px;margin:0 0 30px;background:linear-gradient(140deg,#dce9e6,#f7f1e8);color:#1f2a44;box-shadow:0 4px 20px #0000000b}
+.library-intro{border-radius:16px;padding:30px 20px;margin:0 0 30px;background:linear-gradient(140deg,#e1d4c1,#f6efe2);color:#293f49;box-shadow:0 4px 20px #0000000b}
 .library-intro .eyebrow{font-size:10px;letter-spacing:.18em;margin:0 0 8px;color:#766348}
-.library-intro h1{font-size:34px;font-family:Georgia,serif;color:#1f2a44}
+.library-intro h1{font-size:34px;font-family:Georgia,serif;color:#293f49}
 .library-intro .subheading{font-size:13px;color:#586b72;margin:8px 0 0}
 .library-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:2px solid var(--accent);padding:0 0 11px;margin-bottom:8px}
 .library-heading h2{margin:0;padding:0;border:0;font-size:19px}
@@ -382,3 +382,13 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .reset-reading-buttons #confirm-reset-reading{background:#7d463e;border-color:#7d463e;color:#fff}
 .reset-reading-buttons button:active{opacity:.75}
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
+
+/* Shiorune wordmark: editorial serif with a restrained bookmark-color signature.
+   The app icon itself is unchanged. */
+.brand .brand-wordmark{display:inline-block;font-family:"Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;font-size:21px;font-weight:700;font-style:italic;letter-spacing:-.065em;line-height:1.05;white-space:nowrap;color:var(--fg);padding-right:2px}
+.brand .brand-wordmark-accent{display:inline-block;position:relative;color:var(--accent)}
+.brand .brand-wordmark-accent::after{content:"";position:absolute;left:2px;right:1px;bottom:-4px;height:1.5px;border-radius:2px;background:currentColor;opacity:.65}
+.library-intro h1.library-wordmark{font-family:"Palatino Linotype","Book Antiqua",Georgia,serif;font-size:clamp(36px,7vw,43px);font-weight:700;font-style:italic;letter-spacing:-.06em;line-height:1.3}
+.library-intro h1.library-wordmark span{color:#5c7a7a;position:relative}
+.library-intro h1.library-wordmark::after{content:"";display:block;width:38px;height:2px;border-radius:2px;margin:13px auto 0;background:#8aa5a2}
+@media(max-width:374px){.brand .brand-wordmark{font-size:19px}}
