@@ -328,7 +328,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 /* A richer library with small graphic cover thumbnails and short synopses. */
 .shiorune-library{max-width:810px}
 .library-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:2px solid var(--accent);padding:0 0 11px;margin-bottom:8px}
-.library-heading h2{margin:0;padding:0;border:0;font-size:19px}
+.library-heading h1{margin:0;padding:0;border:0;font-family:var(--ui-font);font-size:19px;line-height:1.5}
 .library-heading>span{font-size:12px;color:var(--muted)}
 .shiorune-library .work-list{list-style:none;padding:0;margin:0}
 .shiorune-library .work-item{border-bottom:1px solid var(--line)}
