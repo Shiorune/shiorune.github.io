@@ -37,11 +37,10 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'id="import-old-reading"' not in root_html
     assert "読む、見つかる、好きがふえる。" not in root_html
     assert 'aria-label="Shiorune 作品一覧へ"' in root_html
-    # Design B uses actual uppercase text at two sizes, not a traced image.
-    assert '<span class="brand-wordmark" aria-hidden="true">SHIORUNE</span>' in root_html
-    assert '<h1 class="library-wordmark" aria-label="Shiorune">SHIORUNE</h1>' in root_html
-    assert 'class="wordmark-lettering"' not in root_html
-    assert 'class="wordmark-spark"' not in root_html
+    # Approved A: case-sensitive lettering in two sizes, backed by one SVG.
+    assert '<span class="brand-wordmark" aria-hidden="true"><span class="wordmark-fallback">Shiorune</span></span>' in root_html
+    assert '<h1 class="library-wordmark" aria-label="Shiorune"><span class="wordmark-fallback" aria-hidden="true">Shiorune</span></h1>' in root_html
+    assert "SHIORUNE" not in root_html
     assert 'A PLACE BETWEEN PAGES' not in root_html
     assert "読む、見つかる、好きがふえる。" not in root_html
 
@@ -99,7 +98,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert (dest / "icon.svg").exists()
     assert "Shiorune" in (dest / "icon.svg").read_text(encoding="utf-8")
     assert not (dest / "wordmark.svg").exists()
-    assert "./wordmark.svg" not in sw
+    assert (dest / "wordmark-a.svg").is_file()
+    wordmark_svg = (dest / "wordmark-a.svg").read_text(encoding="utf-8")
+    assert 'viewBox="0 0 1115 248"' in wordmark_svg
+    assert '<path fill="black"' in wordmark_svg
+    assert "./wordmark-a.svg" in sw
     assert "読む、見つかる、好きがふえる。" not in (dest / "icon.svg").read_text(encoding="utf-8")
 
     assert 'id="chapter-list"' not in home_html
@@ -165,18 +168,21 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".brand img{" in css
     assert ".brand .brand-wordmark{" in css
     assert ".library-intro h1.library-wordmark{" in css
-    assert "font-family:\"Times New Roman\",\"Liberation Serif\",Georgia,serif;" in css
-    assert "font-size:17px;" in css
-    assert "font-size:clamp(34px,7vw,46px);" in css
+    assert "wordmark-a.svg" in css
+    assert "color:var(--brand-ink,var(--fg));" in css
+    assert 'root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54")' in script
+    assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css
+    assert ".brand .brand-wordmark{" in css
+    assert ".library-intro h1.library-wordmark{" in css
+    assert "width:132px;" in css
+    assert "width:min(100%,350px);" in css
+    assert "aspect-ratio:1115/248;" in css
     assert "color:var(--fg);" in css
-    assert "wordmark.svg" not in css
-    assert "mask:url(" not in css
-    assert "wordmark-lettering" not in css
-    assert "wordmark-spark" not in css
-    # Home panel and text colors remain linked to active reading themes.
-    assert "background:linear-gradient(140deg,color-mix(in srgb,var(--bg)" in css
-    assert "color-mix(in srgb,var(--bg) 96%,var(--fg) 4%)" in css
+    assert ".brand .brand-wordmark::after" in css
+    assert "background:#e07a6a;" in css
+    assert "wordmark-b.svg" not in css
     assert "#e1d4c1,#f6efe2" not in css
+    assert "background:color-mix(in srgb,var(--bg) 97%,var(--fg) 3%);" in css
     assert "color:#293f49" not in css
 
     assert "#chapter-list{position:fixed;inset:0;margin:auto" in css
