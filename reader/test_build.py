@@ -223,6 +223,7 @@ def main() -> None:
         (draft / "第001話.md").write_text(
             "# 第001話「未公開」\n\nSECRET-DRAFT\n", encoding="utf-8")
         check_build(source, dest, {"revalna": ["001.html", "003.html"]})
+        site = (dest / "index.html").read_text(encoding="utf-8")
         assert 'id="import-old-reading"' not in site
         assert 'migrate.js' not in site
         assert not (dest / "assets" / "migrate.js").exists()
