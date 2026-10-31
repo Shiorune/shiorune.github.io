@@ -176,12 +176,20 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert "color:var(--brand-ink,var(--fg));" in css
     assert 'root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54")' in script
     assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css
-    assert "flex:0 0 80px;" in css
-    assert "width:80px;" in css
-    assert "height:17.8px;" in css
+    assert "flex:0 0 68px;" in css
+    assert "width:68px;" in css
+    assert "height:15.13px;" in css
     assert ".brand .wordmark-fallback{" in css
-    assert "font-size:13px;" in css
-    assert "width:72px;flex-basis:72px;height:16.02px" in css
+    assert "font-size:12px;" in css
+    assert "width:62px;flex-basis:62px;height:13.8px" in css
+    # Work detail has an unboxed heading, even in night/custom themes.
+    assert ".work-hero{position:relative;padding:10px 0 22px;border-bottom:1px solid var(--line);background:transparent;color:var(--fg)}" in css
+    assert ".work-hero::after{" not in css
+    assert ".work-action-row .start-reading{background:var(--fg);color:var(--bg);box-shadow:none}" in css
+    assert ".work-action-row .continue{display:inline-flex;margin:0;background:transparent;color:var(--fg);border:1px solid var(--line)}" in css
+    assert ".open-episode-list{display:inline-flex" in css
+    assert "border:1px solid var(--line);color:var(--fg);background:transparent" in css
+    assert "linear-gradient(130deg,#223949" not in css
     assert ".brand .brand-wordmark::after" in css
     assert "background:#e07a6a;" in css
     assert ".library-intro" not in css
