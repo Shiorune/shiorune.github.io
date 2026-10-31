@@ -282,20 +282,20 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .work-synopsis{padding:15px 0 13px;border-bottom:1px solid var(--line)}
 .work-synopsis h2{font-size:15px;line-height:1.4;font-weight:750;margin:0 0 6px;letter-spacing:.015em}
 .work-synopsis p{margin:0;line-height:1.75;font-size:13px;color:var(--fg);white-space:pre-line;overflow-wrap:anywhere;letter-spacing:.015em}
-.work-progress{padding:10px 0 12px;margin:9px 0 13px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
-.work-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.4}
-.work-progress-heading strong{font-size:13px;font-weight:750}
-.work-progress-heading span{font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums}
-.work-progress-track{height:4px;border-radius:99px;background:color-mix(in srgb,var(--fg) 13%,var(--bg));overflow:hidden;margin:9px 0 4px}
+.episode-progress{padding:0 0 4px}
+
+
+
+.work-progress-track{height:3px;border-radius:99px;background:color-mix(in srgb,var(--fg) 13%,var(--bg));overflow:hidden;margin:7px 0 0}
 .work-progress-track>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#bf9869,#d9b985);border-radius:99px;transition:width .2s ease}
 .work-progress-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
 .work-progress-footer>p{margin:0;font-size:11px;color:var(--muted);line-height:1.5;min-width:0}
-.work-episodes-section{margin-top:22px}
-.work-episode-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;border-bottom:2px solid var(--accent);padding:0 0 12px}
-.work-episode-heading>div>p{font-size:10px;letter-spacing:.18em;color:var(--muted);margin:0 0 6px}
-.work-episode-heading h2{font-size:20px;line-height:1.4;margin:0;font-weight:750}
-.work-episode-heading>span{font-size:12px;color:var(--muted);padding-bottom:3px;font-variant-numeric:tabular-nums}
-.work-episodes-section .offline-tools{margin:0 0 6px;border-top:0;border-bottom:1px solid var(--line)}
+.work-episodes-section{margin-top:15px}
+.work-episode-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0}
+
+.work-episode-heading h2{font-size:18px;line-height:1.4;margin:0;font-weight:750}
+.work-episode-heading>span{font-size:11px;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+.work-episodes-section .offline-tools{margin:0 0 6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .work-episodes-section .offline-tools summary{min-height:45px}
 .work-episodes{margin:0}
 .work-episodes li{border-bottom:1px solid var(--line)}
@@ -322,7 +322,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   .work-action-row{margin-top:12px}
   .work-action-row a{flex:1 1 155px;padding:11px 12px;font-size:13px;min-height:46px}
   .work-synopsis{padding-top:13px}
-  .work-progress{padding:9px 0 11px;margin:7px 0 11px}
+  .episode-progress{padding-bottom:3px}
   .work-episodes li a{padding-left:5px;padding-right:5px}
 }
 
