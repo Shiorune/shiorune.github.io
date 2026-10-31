@@ -99,7 +99,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert (dest / "icon.svg").exists()
     assert "Shiorune" in (dest / "icon.svg").read_text(encoding="utf-8")
     assert not (dest / "wordmark.svg").exists()
-    assert "./wordmark.svg" not in sw
+    assert (dest / "wordmark-b.svg").exists()
+    vector = (dest / "wordmark-b.svg").read_text(encoding="utf-8")
+    assert vector.count("<path ") == 8
+    assert "viewBox=" in vector and 'preserveAspectRatio="none"' in vector
+    assert "./wordmark-b.svg" in sw
     assert "読む、見つかる、好きがふえる。" not in (dest / "icon.svg").read_text(encoding="utf-8")
 
     assert 'id="chapter-list"' not in home_html
@@ -165,17 +169,19 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".brand img{" in css
     assert ".brand .brand-wordmark{" in css
     assert ".library-intro h1.library-wordmark{" in css
-    assert "font-family:\"Times New Roman\",\"Liberation Serif\",Georgia,serif;" in css
+    assert "font-family:Georgia,\"Times New Roman\",serif;" in css
     assert "font-size:17px;" in css
     assert "font-size:clamp(34px,7vw,46px);" in css
     assert "color:var(--fg);" in css
-    assert "wordmark.svg" not in css
-    assert "mask:url(" not in css
+    assert "wordmark-b.svg" in css
+    assert 'mask:url("../wordmark-b.svg") center/100% 100% no-repeat;' in css
     assert "wordmark-lettering" not in css
     assert "wordmark-spark" not in css
-    # Home panel and text colors remain linked to active reading themes.
-    assert "background:linear-gradient(140deg,color-mix(in srgb,var(--bg)" in css
-    assert "color-mix(in srgb,var(--bg) 96%,var(--fg) 4%)" in css
+    assert ".library-intro::after{" in css
+    # Title panel is bright on light colors and subdued on dark custom colors.
+    assert "--home-panel-surface" in css
+    assert "color-mix(in srgb,var(--bg) 52%,white 48%)" in css
+    assert "color-mix(in srgb,var(--bg) 93%,var(--fg) 7%)" in script
     assert "#e1d4c1,#f6efe2" not in css
     assert "color:#293f49" not in css
 
