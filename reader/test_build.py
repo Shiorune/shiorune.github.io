@@ -37,6 +37,12 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'id="import-old-reading"' not in root_html
     assert "読む、見つかる、好きがふえる。" not in root_html
     assert 'aria-label="Shiorune 作品一覧へ"' in root_html
+    # The app icon remains the same; only the typographic wordmark changes.
+    assert 'class="brand-wordmark"' in root_html
+    assert 'class="brand-wordmark-accent"' in root_html
+    assert 'class="library-wordmark"' in root_html
+    assert '読む、見つかる、好きがふえる。' not in root_html
+
     for work_id, names in chapters.items():
         ep_folder = dest / "works" / work_id / "episodes"
         assert ep_folder.is_dir()
@@ -152,6 +158,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-hero{" in css
     assert ".work-episodes .episode-status{" in css
     assert ".brand img{" in css
+    assert ".brand .brand-wordmark{" in css
+    assert ".library-intro h1.library-wordmark{" in css
+    assert "#e1d4c1,#f6efe2" in css
+    assert ".work-hero{" in css
+
     assert "#chapter-list{position:fixed;inset:0;margin:auto" in css
     assert "inset:0;margin:auto" in css
     assert ".prose{max-width:680px" in css
