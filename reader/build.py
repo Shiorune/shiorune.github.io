@@ -243,13 +243,43 @@ def build() -> None:
         description = work["description"]
         book_dir = DEST / "works" / work_id
         (book_dir / "episodes").mkdir(parents=True)
-        for ep in episodes:
+        for ep_index, ep in enumerate(episodes):
+            previous_ep = episodes[ep_index - 1] if ep_index else None
+            next_ep = episodes[ep_index + 1] if ep_index + 1 < len(episodes) else None
             toc_items = "\n".join(
                 '<li><a href="' + entry["slug"] + '.html"' +
                 (' aria-current="page"' if entry["slug"] == ep["slug"] else '') +
                 '>' + html.escape(entry["name"]) + '</a></li>'
                 for entry in episodes)
-            body = f'<article class="prose">{ep["html"]}</article>'
+            previous_link = (
+                '<a class="episode-prev-link" href="' + previous_ep["slug"] + '.html"'
+                ' rel="prev" aria-label="前の話：' + html.escape(previous_ep["name"], quote=True) + '">'
+                '‹ 前の話</a>'
+                if previous_ep else ''
+            )
+            next_link = (
+                '<a class="episode-next-link" id="episode-next-link" href="' + next_ep["slug"] + '.html"'
+                ' rel="next"><span class="episode-next-label">次の話へ</span>'
+                '<strong>' + html.escape(next_ep["name"]) + '</strong><span aria-hidden="true">→</span></a>'
+                if next_ep else ''
+            )
+            swipe_zone = (
+                '<div class="episode-swipe-zone" id="episode-swipe-zone"'
+                ' aria-label="ここを上にスワイプすると次の話へ進みます">'
+                '<span aria-hidden="true" class="episode-swipe-chevrons">⌃⌃</span>'
+                '<span>ここを上にスワイプして次の話へ</span></div>'
+                if next_ep else ''
+            )
+            chapter_top = (
+                '<nav class="episode-top-navigation" aria-label="前の話">' + previous_link + '</nav>'
+                if previous_ep else ''
+            )
+            chapter_bottom = (
+                '<nav class="episode-end-navigation" aria-label="エピソードの移動">'
+                '<div class="episode-end-links">' + previous_link + next_link + '</div>'
+                + swipe_zone + '</nav>'
+            )
+            body = chapter_top + f'<article class="prose">{ep["html"]}</article>' + chapter_bottom
             page = document(ep["name"], body, asset_prefix="../../../",
                             is_episode=True, toc_items=toc_items, work_title=title)
             dest = book_dir / "episodes" / f'{ep["slug"]}.html'

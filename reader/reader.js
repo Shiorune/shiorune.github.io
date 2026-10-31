@@ -241,6 +241,54 @@
     }, {passive: true});
     window.addEventListener("resize", updateProgress, {passive: true});
     updateProgress();
+
+    // An intentional upward gesture *inside the end-of-chapter target* moves
+    // to the next chapter. Never bind to document scrolling or top-edge pulls:
+    // those belong to the browser (refresh/history/navigation).
+    const nextChapter = el("episode-next-link");
+    const swipeZone = el("episode-swipe-zone");
+    if (nextChapter && swipeZone) {
+      let swipeStart = null;
+      swipeZone.addEventListener("pointerdown", event => {
+        if (event.pointerType !== "touch" || !event.isPrimary || openOverlays > 0) return;
+        const rect = swipeZone.getBoundingClientRect();
+        // The whole target must be on screen before accepting a gesture.
+        if (rect.top < 0 || rect.bottom > innerHeight + 2) return;
+        swipeStart = {id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now()};
+        try { swipeZone.setPointerCapture(event.pointerId); } catch {}
+      });
+      swipeZone.addEventListener("pointercancel", () => { swipeStart = null; });
+      swipeZone.addEventListener("pointerup", event => {
+        if (!swipeStart || event.pointerId !== swipeStart.id) return;
+        const start = swipeStart;
+        swipeStart = null;
+        if (openOverlays > 0) return;
+        const dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+        const duration = performance.now() - start.time;
+        if (dy > -70 || Math.abs(dx) > Math.abs(dy) * 0.5 || duration < 90 || duration > 1400) return;
+        updateProgress();
+        location.assign(nextChapter.href);
+      });
+
+      // Preload exactly one next chapter while idle. The service worker caches
+      // visited chapters; explicitly store the prefetch for first-time visitors
+      // before the service worker takes control. Respect metered connections.
+      const connection = navigator.connection;
+      if (navigator.onLine !== false && !connection?.saveData &&
+          !["slow-2g", "2g"].includes(connection?.effectiveType)) {
+        const preloadNext = () => {
+          fetch(nextChapter.href, {credentials: "same-origin"})
+            .then(async response => {
+              if (!response.ok || response.type === "opaque" || !("caches" in window)) return;
+              const cache = await caches.open("velune-episodes-v1");
+              await cache.put(nextChapter.href, response.clone());
+            }).catch(() => {});
+        };
+        if ("requestIdleCallback" in window) requestIdleCallback(preloadNext, {timeout: 3500});
+        else setTimeout(preloadNext, 1700);
+      }
+    }
   } else {
     const continuation = el("continue-reading");
     const entries = [...document.querySelectorAll(".work-episodes a")];
