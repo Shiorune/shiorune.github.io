@@ -91,12 +91,20 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'class="work-progress-footer"' in home_html
     assert 'id="reading-summary"' in home_html
     assert 'id="completed-count"' in home_html
-    # Source order is also the keyboard/screen-reader order:
-    # title, synopsis, read actions, progress, then episode list.
+    # Progress is part of the episode list, not a separate section.
     assert home_html.index('<section class="work-hero"') < home_html.index('<section class="work-synopsis"')
     assert home_html.index('<section class="work-synopsis"') < home_html.index('<div class="work-action-row"')
-    assert home_html.index('<div class="work-action-row"') < home_html.index('<section class="work-progress"')
-    assert home_html.index('<section class="work-progress"') < home_html.index('<section class="work-episodes-section"')
+    assert home_html.index('<div class="work-action-row"') < home_html.index('<section class="work-episodes-section"')
+    assert '<section class="work-progress"' not in home_html
+    episode_section = home_html[home_html.index('<section class="work-episodes-section"'):]
+    assert episode_section.index('id="episode-list-title"') < episode_section.index('id="completed-count"')
+    assert episode_section.index('id="completed-count"') < episode_section.index('class="episode-progress"')
+    assert episode_section.index('class="episode-progress"') < episode_section.index('id="reset-reading"')
+    assert episode_section.index('id="reset-reading"') < episode_section.index('<details class="offline-tools"')
+    assert episode_section.index('<details class="offline-tools"') < episode_section.index('<ol class="toc work-episodes"')
+    assert home_html.count('id="completed-count"') == 1
+    assert home_html.count('id="work-progress-bar"') == 1
+    assert home_html.count('id="reset-reading"') == 1
     assert 'aria-label="読む"' in home_html
     assert 'class="start-reading"' in home_html
     assert 'id="continue-reading" hidden' in home_html
@@ -200,8 +208,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-synopsis{padding:15px 0 13px;" in css
     assert ".synopsis-expander summary{cursor:pointer;display:grid;" in css
     assert "-webkit-line-clamp:2" in css
-    assert ".work-progress{padding:10px 0 12px;margin:9px 0 13px;border:0;" in css
-    assert ".work-progress-track{height:4px;" in css
+    assert ".episode-progress{padding:0 0 4px}" in css
+    assert ".work-progress{" not in css
+    assert ".work-progress-track{height:3px;" in css
+    assert ".work-episodes-section{margin-top:15px}" in css
+    assert ".work-episode-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0}" in css
     assert ".work-progress-footer{display:flex;" in css
     assert ".work-progress-actions button{min-height:40px;" in css
     # Work detail has an unboxed heading, even in night/custom themes.
