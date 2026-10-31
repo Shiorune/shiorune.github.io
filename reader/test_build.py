@@ -32,7 +32,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     mod.build()
     root_html = (dest / "index.html").read_text(encoding="utf-8")
     assert "Shiorune" in root_html
-    assert "Velune" not in root_html
+    assert 'aria-label="Velune 作品一覧へ"' not in root_html
+    # The old brand appears only in explicit migration help, not site branding.
+    assert 'id="import-old-reading"' in root_html
     assert "読む、見つかる、好きがふえる。" not in root_html
     assert 'aria-label="Shiorune 作品一覧へ"' in root_html
     for work_id, names in chapters.items():
