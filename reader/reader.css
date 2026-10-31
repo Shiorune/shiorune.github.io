@@ -382,3 +382,13 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .reset-reading-buttons #confirm-reset-reading{background:#7d463e;border-color:#7d463e;color:#fff}
 .reset-reading-buttons button:active{opacity:.75}
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
+
+
+/* Legacy reading data transfer: discreet and optional, below work list. */
+.migration-panel{margin:30px 0 10px;border:1px solid var(--line);border-radius:13px;padding:18px 20px;background:color-mix(in srgb,var(--accent) 5%,var(--bg));font-family:var(--ui-font)}
+.migration-panel h2{font-size:15px;line-height:1.5;margin:0 0 8px;font-weight:700}
+.migration-panel p{font-size:12px;line-height:1.75;color:var(--muted);margin:0 0 12px}
+.migration-panel button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--fg);padding:9px 13px;font-size:12px;font-weight:700;touch-action:manipulation}
+.migration-panel button:disabled{opacity:.6}
+.migration-panel #import-status{margin:12px 0 0;color:var(--accent);font-weight:600}
+@media(max-width:374px){.migration-panel{padding:15px 14px}}
