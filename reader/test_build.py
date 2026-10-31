@@ -32,6 +32,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     mod.build()
     root_html = (dest / "index.html").read_text(encoding="utf-8")
     assert "Shiorune" in root_html
+    # Browser/PWA visits fetch the new release instead of a previously cached CSS/JS.
+    assert f'assets/reader.css?v={mod.ASSET_VERSION}' in root_html
+    assert f'assets/reader.js?v={mod.ASSET_VERSION}' in root_html
+    assert len(mod.ASSET_VERSION) == 12
+
     assert 'aria-label="Velune 作品一覧へ"' not in root_html
     # The old brand appears only in explicit migration help, not site branding.
     assert 'id="import-old-reading"' not in root_html
