@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title">
+<title id="title">Shiorune — 折り紙のしおり</title>
+<defs>
+  <linearGradient id="night" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#243a58"/><stop offset="1" stop-color="#102239"/></linearGradient>
+  <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#77a8a8"/><stop offset="1" stop-color="#367786"/></linearGradient>
+  <linearGradient id="paper" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#fff8e9"/><stop offset="1" stop-color="#e2d4bc"/></linearGradient>
+</defs>
+<rect x="2" y="2" width="188" height="188" rx="38" fill="url(#night)"/>
+<path d="M44 61 100 31 145 49 100 74 65 91 118 119 113 146 50 105 38 87Z" fill="url(#paper)"/>
+<path d="M38 87 65 91 118 119 103 137 50 107 38 101Z" fill="url(#ribbon)"/>
+<path d="M100 74 145 49 129 81 103 96 65 91Z" fill="#263d57"/>
+<path d="M103 137 118 119 126 126 126 166 109 154 92 169 92 142Z" fill="#e07a6a"/>
+<path d="M44 61 100 31 145 49 100 74" fill="none" stroke="#ffffff" stroke-opacity=".22" stroke-width="2"/>
+</svg>
