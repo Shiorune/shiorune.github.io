@@ -15,6 +15,11 @@ DEST = ROOT / "dist"
 EPISODE_FILE = re.compile(r"^第([0-9]+)話\.md$")
 HEADLINE = re.compile(r"^# +([^\n]+)\s*$", flags=re.MULTILINE)
 TITLE = "Shiorune"
+# Changing CSS, JavaScript or the wordmark must bypass stale browser asset caches.
+ASSET_VERSION = hashlib.sha256(
+    b"".join((ROOT / "reader" / name).read_bytes()
+             for name in ("reader.css", "reader.js", "wordmark.svg"))
+).hexdigest()[:12]
 MARKDOWN = MarkdownIt("commonmark", {"html": False, "linkify": False}).enable("table").enable("strikethrough")
 
 
@@ -158,13 +163,13 @@ def document(title: str, body: str, *, asset_prefix: str, is_episode: bool, toc_
 <html lang="ja" data-theme="paper"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4edde"><meta name="app-root" content="{asset_prefix}"><meta name="description" content="Shiorune 小説リーダー">
 <link rel="manifest" href="{asset_prefix}manifest.webmanifest"><link rel="icon" href="{asset_prefix}icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="{asset_prefix}assets/reader.css"><title>{html.escape(title)} - {TITLE}</title></head>
+<link rel="stylesheet" href="{asset_prefix}assets/reader.css?v={ASSET_VERSION}"><title>{html.escape(title)} - {TITLE}</title></head>
 <body data-episode="{'true' if is_episode else 'false'}">
 <header class="topbar"><a class="brand" href="{asset_prefix}index.html" aria-label="Shiorune 作品一覧へ"><img src="{asset_prefix}icon.svg" alt="" aria-hidden="true" width="28" height="28"><span class="brand-wordmark" aria-hidden="true"><span class="wordmark-fallback">Shiorune</span><span class="wordmark-lettering"></span><span class="wordmark-spark"></span></span></a><div class="topbar-controls"><span class="offline-state" id="offline-state" aria-live="polite"></span>{toc_button}<button id="open-settings" type="button" class="icon-btn" aria-label="表示設定">Aa</button></div></header>
 <main class="reading-area">{body}</main>
 {toc_dialog}
 {settings}<div class="progress-track" id="progress-track" aria-hidden="true"></div>
-<script defer src="{asset_prefix}assets/reader.js"></script></body></html>'''
+<script defer src="{asset_prefix}assets/reader.js?v={ASSET_VERSION}"></script></body></html>'''
 
 
 WORK_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
