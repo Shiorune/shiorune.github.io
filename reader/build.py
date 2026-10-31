@@ -348,9 +348,7 @@ def build() -> None:
         total_episodes += len(episodes)
 
     library = (f'<section class="home shiorune-library">'
-               '<div class="library-intro">'
-               '<h1 class="library-wordmark" aria-label="Shiorune"><span class="wordmark-fallback" aria-hidden="true">Shiorune</span></h1></div>'
-               f'<div class="library-heading"><h2>作品一覧</h2><span>{len(works)}作品</span></div>'
+               f'<div class="library-heading"><h1>作品一覧</h1><span>{len(works)}作品</span></div>'
                '<ul class="work-list">' + "".join(library_items) + '</ul></section>')
     (DEST / "index.html").write_text(
         document("作品一覧", library, asset_prefix="./", is_episode=False), encoding="utf-8")

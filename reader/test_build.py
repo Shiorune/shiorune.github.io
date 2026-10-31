@@ -37,9 +37,14 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'id="import-old-reading"' not in root_html
     assert "読む、見つかる、好きがふえる。" not in root_html
     assert 'aria-label="Shiorune 作品一覧へ"' in root_html
-    # Approved A: case-sensitive lettering in two sizes, backed by one SVG.
+    # Approved A lettering should appear only in the compact header.
     assert '<span class="brand-wordmark" aria-hidden="true"><span class="wordmark-fallback">Shiorune</span></span>' in root_html
-    assert '<h1 class="library-wordmark" aria-label="Shiorune"><span class="wordmark-fallback" aria-hidden="true">Shiorune</span></h1>' in root_html
+    assert 'class="library-intro"' not in root_html
+    assert 'class="library-wordmark"' not in root_html
+    assert '<div class="library-heading"><h1>作品一覧</h1>' in root_html
+    assert root_html.count("<h1") == 1
+    assert ".library-heading h1{" in (dest / "assets" / "reader.css").read_text(encoding="utf-8")
+    assert root_html.count('class="brand-wordmark"') == 1
     assert "SHIORUNE" not in root_html
     assert 'A PLACE BETWEEN PAGES' not in root_html
     assert "読む、見つかる、好きがふえる。" not in root_html
@@ -167,25 +172,22 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-episodes .episode-status{" in css
     assert ".brand img{" in css
     assert ".brand .brand-wordmark{" in css
-    assert ".library-intro h1.library-wordmark{" in css
     assert "wordmark-a.svg" in css
     assert "color:var(--brand-ink,var(--fg));" in css
     assert 'root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54")' in script
     assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css
-    assert ".brand .brand-wordmark{" in css
-    assert ".library-intro h1.library-wordmark{" in css
-    assert "width:100px;" in css
-    assert "height:22.25px;" in css
-    assert "width:min(100%,240px);" in css
-    assert "font-size:clamp(24px,6vw,36px);" in css
-    assert "width:92px;flex-basis:92px;height:20.46px" in css
-    assert "aspect-ratio:1115/248;" in css
-    assert "color:var(--fg);" in css
+    assert "flex:0 0 80px;" in css
+    assert "width:80px;" in css
+    assert "height:17.8px;" in css
+    assert ".brand .wordmark-fallback{" in css
+    assert "font-size:13px;" in css
+    assert "width:72px;flex-basis:72px;height:16.02px" in css
     assert ".brand .brand-wordmark::after" in css
     assert "background:#e07a6a;" in css
+    assert ".library-intro" not in css
+    assert ".library-wordmark" not in css
     assert "wordmark-b.svg" not in css
     assert "#e1d4c1,#f6efe2" not in css
-    assert "background:color-mix(in srgb,var(--bg) 97%,var(--fg) 3%);" in css
     assert "color:#293f49" not in css
 
     assert "#chapter-list{position:fixed;inset:0;margin:auto" in css
