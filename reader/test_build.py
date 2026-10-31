@@ -181,8 +181,7 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert "color-mix(in srgb,var(--bg) 96%,var(--fg) 4%)" in css
     assert ".library-intro .eyebrow{font-size:10px;letter-spacing:.18em;margin:0 0 8px;color:var(--muted)}" in css
     assert ".library-intro h1.library-wordmark{" in css
-    assert ".library-intro h1.library-wordmark{" in css
-    assert "#e1d4c1,#f6efe2" in css
+    assert "#e1d4c1,#f6efe2" not in css
     assert ".work-hero{" in css
 
     assert "#chapter-list{position:fixed;inset:0;margin:auto" in css
