@@ -383,17 +383,30 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .reset-reading-buttons button:active{opacity:.75}
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
 
-/* Original Shiorune lettering traced from the approved logo image.
-   SVG mask uses the active theme's foreground; coral spark remains ornamental.
-   On browsers without CSS masking, show an ordinary accessible text label. */
-.brand .brand-wordmark{position:relative;display:inline-flex;align-items:center;justify-content:center;width:148px;height:36px;flex:0 0 148px;color:var(--fg);white-space:nowrap}
-.library-intro h1.library-wordmark{position:relative;display:flex;align-items:center;justify-content:center;width:min(230px,100%);height:56px;margin:0 auto;color:var(--fg);font-family:Georgia,serif;font-size:36px;font-style:normal;font-weight:500;letter-spacing:-.04em}
-.brand .wordmark-fallback,.library-wordmark .wordmark-fallback{display:inline-block;font-family:Georgia,serif;font-size:inherit;font-style:normal;font-weight:500;letter-spacing:-.04em}
-.brand .wordmark-fallback{font-size:19px}
-.brand .wordmark-lettering,.library-wordmark .wordmark-lettering,.brand .wordmark-spark,.library-wordmark .wordmark-spark{display:none}
-@supports ((mask-image:url("../wordmark.svg")) or (-webkit-mask-image:url("../wordmark.svg"))){
-  .brand .wordmark-fallback,.library-wordmark .wordmark-fallback{display:none}
-  .brand .wordmark-lettering,.library-wordmark .wordmark-lettering{display:block;position:absolute;inset:0;background:currentColor;-webkit-mask:url("../wordmark.svg") center/contain no-repeat;mask:url("../wordmark.svg") center/contain no-repeat}
-  .brand .wordmark-spark,.library-wordmark .wordmark-spark{display:block;position:absolute;left:29.6%;top:13.4%;width:5.1%;height:21.8%;background:#e07a6a;clip-path:polygon(50% 0,64% 34%,100% 50%,64% 66%,50% 100%,36% 66%,0 50%,36% 34%);pointer-events:none}
+/* Selected design B: sharp uppercase serif; real rendered text stays crisp
+   at both header and home sizes. No bitmap, SVG mask, gradients or fixed color. */
+.brand .brand-wordmark{
+  display:inline-block;
+  font-family:"Times New Roman","Liberation Serif",Georgia,serif;
+  font-weight:400;
+  font-style:normal;
+  font-size:17px;
+  line-height:1;
+  letter-spacing:.04em;
+  font-variant-ligatures:none;
+  color:var(--fg);
+  white-space:nowrap;
 }
-@media(max-width:374px){.brand .brand-wordmark{width:134px;flex-basis:134px;height:33px}}
+.library-intro h1.library-wordmark{
+  font-family:"Times New Roman","Liberation Serif",Georgia,serif;
+  font-weight:400;
+  font-style:normal;
+  font-size:clamp(34px,7vw,46px);
+  line-height:1.12;
+  letter-spacing:.04em;
+  color:var(--fg);
+  overflow-wrap:normal;
+  white-space:nowrap;
+  margin:0;
+}
+@media(max-width:374px){.brand .brand-wordmark{font-size:15px}.library-intro h1.library-wordmark{font-size:clamp(28px,8vw,36px)}}
