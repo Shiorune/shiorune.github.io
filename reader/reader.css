@@ -262,7 +262,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .work-breadcrumb{display:flex;align-items:center;gap:8px;margin:0 0 18px;font-size:12px;color:var(--muted);line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .work-breadcrumb a{flex-shrink:0;text-decoration:underline;text-underline-offset:3px}
 .work-breadcrumb span[aria-current]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.work-hero{position:relative;padding:10px 0 22px;border-bottom:1px solid var(--line);background:transparent;color:var(--fg)}
+.work-hero{position:relative;padding:10px 0 5px;background:transparent;color:var(--fg)}
 
 .work-hero-main{position:relative;z-index:1;display:flex;align-items:center;gap:22px}
 .work-cover{width:126px;height:162px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;background:linear-gradient(145deg,#ebd9bf,#c9b091);border:1px solid #fff8de85;border-radius:8px;box-shadow:4px 9px 18px #0004;color:#2d3d45}
@@ -273,7 +273,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .work-hero h1{margin:0 0 19px;line-height:1.45;font-size:clamp(22px,4.7vw,31px);font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-weight:750;letter-spacing:.015em;overflow-wrap:anywhere}
 .work-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;color:var(--muted);font-size:12px}
 .work-meta span+span::before{content:"•";margin-right:12px;color:var(--muted)}
-.work-action-row{position:relative;z-index:1;display:flex;gap:10px;align-items:stretch;margin:23px 0 0;flex-wrap:wrap}
+.work-action-row{position:relative;z-index:1;display:flex;gap:10px;align-items:stretch;margin:15px 0 0;flex-wrap:wrap}
 .work-action-row a{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;border-radius:10px;padding:12px 19px;font-size:14px;font-weight:750;line-height:1.4;max-width:100%;overflow-wrap:anywhere;touch-action:manipulation}
 .work-action-row .start-reading{background:var(--fg);color:var(--bg);box-shadow:none}
 .work-action-row .start-reading:active{opacity:.82}
@@ -310,7 +310,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .work-episodes li[data-reading-state="finished"] .episode-status{color:#7b9778;font-weight:750}
 .work-episodes li[data-reading-state="finished"] .episode-status::before{content:"✓";margin-right:4px}
 @media(max-width:540px){
-  .work-hero{padding:8px 0 19px}
+  .work-hero{padding:8px 0 5px}
   .work-hero-main{gap:14px;align-items:flex-start}
   .work-cover{width:88px;height:119px;gap:7px}
   .work-cover img{width:58px;height:58px;border-radius:14px}
@@ -319,7 +319,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   .work-hero h1{font-size:clamp(18px,5.2vw,23px);margin-bottom:11px}
   .work-meta{font-size:11px;gap:7px}
   .work-meta span+span::before{margin-right:7px}
-  .work-action-row{margin-top:18px}
+  .work-action-row{margin-top:12px}
   .work-action-row a{flex:1 1 155px;padding:11px 12px;font-size:13px;min-height:46px}
   .work-synopsis{padding-top:13px}
   .work-progress{padding:9px 0 11px;margin:7px 0 11px}
