@@ -394,7 +394,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   flex:0 0 132px;
   width:132px;
   height:29.4px;
-  color:var(--fg);
+  color:var(--brand-ink,var(--fg));
   white-space:nowrap;
 }
 .library-intro h1.library-wordmark{
@@ -406,7 +406,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
   aspect-ratio:1115/248;
   height:auto;
   margin:0 auto;
-  color:var(--fg);
+  color:var(--brand-ink,var(--fg));
   font-family:Georgia,"Times New Roman",serif;
   font-weight:400;
   font-style:normal;
