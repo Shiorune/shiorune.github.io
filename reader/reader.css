@@ -327,7 +327,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 
 /* A richer library with small graphic cover thumbnails and short synopses. */
 .shiorune-library{max-width:810px}
-.library-intro{border-radius:16px;padding:28px 20px;margin:0 0 30px;background:linear-gradient(140deg,color-mix(in srgb,var(--bg) 88%,var(--fg) 12%),color-mix(in srgb,var(--bg) 96%,var(--fg) 4%));color:var(--fg);box-shadow:0 4px 20px color-mix(in srgb,var(--fg) 7%,transparent)}
+.library-intro{border-radius:16px;padding:32px 20px 30px;margin:0 0 30px;background:color-mix(in srgb,var(--bg) 97%,var(--fg) 3%);color:var(--fg);box-shadow:none}
 .library-intro .eyebrow{font-size:10px;letter-spacing:.18em;margin:0 0 8px;color:var(--muted)}
 .library-intro h1{font-size:34px;font-family:Georgia,serif;color:var(--fg)}
 .library-intro .subheading{font-size:13px;color:var(--muted);margin:8px 0 0}
@@ -383,30 +383,71 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .reset-reading-buttons button:active{opacity:.75}
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
 
-/* Selected design B: sharp uppercase serif; real rendered text stays crisp
-   at both header and home sizes. No bitmap, SVG mask, gradients or fixed color. */
+/* Approved A wordmark: the original high-resolution lettering, traced as a
+   vector. Theme contrast comes from --fg; the coral spark is the sole accent.
+   The same outlines scale to header and home without raster blur. */
 .brand .brand-wordmark{
-  display:inline-block;
-  font-family:"Times New Roman","Liberation Serif",Georgia,serif;
-  font-weight:400;
-  font-style:normal;
-  font-size:17px;
-  line-height:1;
-  letter-spacing:.04em;
-  font-variant-ligatures:none;
+  position:relative;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  flex:0 0 132px;
+  width:132px;
+  height:29.4px;
   color:var(--fg);
   white-space:nowrap;
 }
 .library-intro h1.library-wordmark{
-  font-family:"Times New Roman","Liberation Serif",Georgia,serif;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:min(100%,350px);
+  aspect-ratio:1115/248;
+  height:auto;
+  margin:0 auto;
+  color:var(--fg);
+  font-family:Georgia,"Times New Roman",serif;
   font-weight:400;
   font-style:normal;
-  font-size:clamp(34px,7vw,46px);
-  line-height:1.12;
-  letter-spacing:.04em;
-  color:var(--fg);
-  overflow-wrap:normal;
-  white-space:nowrap;
-  margin:0;
+  font-size:clamp(34px,8vw,64px);
+  letter-spacing:-.035em;
+  line-height:1;
 }
-@media(max-width:374px){.brand .brand-wordmark{font-size:15px}.library-intro h1.library-wordmark{font-size:clamp(28px,8vw,36px)}}
+.brand .wordmark-fallback,.library-wordmark .wordmark-fallback{
+  display:inline-block;
+  color:inherit;
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-style:normal;
+  font-size:inherit;
+  line-height:1.1;
+  letter-spacing:-.035em;
+}
+.brand .wordmark-fallback{font-size:20px}
+@supports ((-webkit-mask-image:url("../wordmark-a.svg")) or (mask-image:url("../wordmark-a.svg"))){
+  .brand .wordmark-fallback,.library-wordmark .wordmark-fallback{display:none}
+  .brand .brand-wordmark::before,.library-intro h1.library-wordmark::before{
+    content:"";
+    display:block;
+    position:absolute;
+    inset:0;
+    background:currentColor;
+    -webkit-mask:url("../wordmark-a.svg") center/100% 100% no-repeat;
+    mask:url("../wordmark-a.svg") center/100% 100% no-repeat;
+  }
+  .brand .brand-wordmark::after,.library-intro h1.library-wordmark::after{
+    content:"";
+    position:absolute;
+    left:31.5%;
+    top:2.8%;
+    width:5.6%;
+    height:27.4%;
+    background:#e07a6a;
+    clip-path:polygon(50% 0,64% 34%,100% 50%,64% 66%,50% 100%,36% 66%,0 50%,36% 34%);
+    pointer-events:none;
+  }
+}
+@media(max-width:374px){
+  .brand .brand-wordmark{width:118px;flex-basis:118px;height:26.25px}
+}
