@@ -65,6 +65,11 @@
     root.style.setProperty("--muted", isDark ? "#c6c9cd" : "#566069");
     root.style.setProperty("--line", isDark ? "#66696d" : "#c4c7c7");
     root.style.setProperty("--accent", isDark ? "#f1ca92" : "#5a5245");
+    // Keep the library title surface gently lighter than the current theme,
+    // including user-selected dark custom colors.
+    root.style.setProperty("--home-panel-surface", isDark
+      ? "color-mix(in srgb,var(--bg) 93%,var(--fg) 7%)"
+      : "color-mix(in srgb,var(--bg) 52%,white 48%)");
     root.style.setProperty("--reader-font", fonts[settings.font]);
     root.style.setProperty("--font-size", settings.fontSize + "px");
     root.style.setProperty("--line-height", settings.lineHeight.toFixed(1));
