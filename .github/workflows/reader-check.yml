@@ -2,8 +2,6 @@ name: Verify Shiorune reader
 
 # Test once when a PR is marked ready; do not run for every commit.
 on:
-  push:
-    branches: [main]
   pull_request:
     types: [ready_for_review]
   workflow_dispatch:
