@@ -169,6 +169,8 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".brand .brand-wordmark{" in css
     assert ".library-intro h1.library-wordmark{" in css
     assert "wordmark-a.svg" in css
+    assert "color:var(--brand-ink,var(--fg));" in css
+    assert 'root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54")' in script
     assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css
     assert ".brand .brand-wordmark{" in css
     assert ".library-intro h1.library-wordmark{" in css
