@@ -39,7 +39,11 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'aria-label="Shiorune 作品一覧へ"' in root_html
     # The app icon remains the same; only the typographic wordmark changes.
     assert 'class="brand-wordmark"' in root_html
-    assert 'class="wordmark-i"' in root_html
+    assert 'class="wordmark-lettering"' in root_html
+    assert 'class="wordmark-spark"' in root_html
+    assert 'class="wordmark-fallback">Shiorune</span>' in root_html
+    assert 'class="library-wordmark" aria-label="Shiorune"' in root_html
+    assert 'class="wordmark-i"' not in root_html
     assert 'brand-wordmark-accent' not in root_html
     assert "A PLACE BETWEEN PAGES" in root_html
     assert 'class="library-wordmark"' in root_html
@@ -98,6 +102,10 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert '<img src="../../icon.svg"' in home_html
     assert (dest / "icon.svg").exists()
     assert "Shiorune" in (dest / "icon.svg").read_text(encoding="utf-8")
+    wordmark = (dest / "wordmark.svg").read_text(encoding="utf-8")
+    assert '<svg ' in wordmark and 'fill-rule="evenodd"' in wordmark
+    assert wordmark.count('<path') == 1
+    assert "./wordmark.svg" in sw
     assert "読む、見つかる、好きがふえる。" not in (dest / "icon.svg").read_text(encoding="utf-8")
     assert 'id="chapter-list"' not in home_html
     assert 'id="toc-filter"' not in home_html
@@ -161,13 +169,19 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-episodes .episode-status{" in css
     assert ".brand img{" in css
     assert ".brand .brand-wordmark{" in css
-    assert ".brand-wordmark .wordmark-i::after" in css
-    assert "font-style:normal;font-weight:500" in css
-    assert ".brand .brand-wordmark-accent" not in css
+    assert '.wordmark-lettering' in css
+    assert 'mask:url("../wordmark.svg")' in css
+    assert 'color:var(--fg)' in css
+    assert "color:#293f49" not in css
+    assert ".brand-wordmark-accent" not in css
+    assert ".wordmark-i" not in css
     assert "font-style:italic" not in css
-    assert ".library-intro h1.library-wordmark::after" not in css
+    # The homepage heading and panel must adapt to every background theme.
+    assert "background:linear-gradient(140deg,color-mix(in srgb,var(--bg)" in css
+    assert "color-mix(in srgb,var(--bg) 96%,var(--fg) 4%)" in css
+    assert ".library-intro .eyebrow{font-size:10px;letter-spacing:.18em;margin:0 0 8px;color:var(--muted)}" in css
     assert ".library-intro h1.library-wordmark{" in css
-    assert "#e1d4c1,#f6efe2" in css
+    assert "#e1d4c1,#f6efe2" not in css
     assert ".work-hero{" in css
 
     assert "#chapter-list{position:fixed;inset:0;margin:auto" in css

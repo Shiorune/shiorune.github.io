@@ -327,10 +327,10 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 
 /* A richer library with small graphic cover thumbnails and short synopses. */
 .shiorune-library{max-width:810px}
-.library-intro{border-radius:16px;padding:28px 20px;margin:0 0 30px;background:linear-gradient(140deg,#e1d4c1,#f6efe2);color:#293f49;box-shadow:0 4px 20px #0000000b}
-.library-intro .eyebrow{font-size:10px;letter-spacing:.18em;margin:0 0 8px;color:#766348}
-.library-intro h1{font-size:34px;font-family:Georgia,serif;color:#293f49}
-.library-intro .subheading{font-size:13px;color:#586b72;margin:8px 0 0}
+.library-intro{border-radius:16px;padding:28px 20px;margin:0 0 30px;background:linear-gradient(140deg,color-mix(in srgb,var(--bg) 88%,var(--fg) 12%),color-mix(in srgb,var(--bg) 96%,var(--fg) 4%));color:var(--fg);box-shadow:0 4px 20px color-mix(in srgb,var(--fg) 7%,transparent)}
+.library-intro .eyebrow{font-size:10px;letter-spacing:.18em;margin:0 0 8px;color:var(--muted)}
+.library-intro h1{font-size:34px;font-family:Georgia,serif;color:var(--fg)}
+.library-intro .subheading{font-size:13px;color:var(--muted);margin:8px 0 0}
 .library-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:2px solid var(--accent);padding:0 0 11px;margin-bottom:8px}
 .library-heading h2{margin:0;padding:0;border:0;font-size:19px}
 .library-heading>span{font-size:12px;color:var(--muted)}
@@ -383,11 +383,17 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .reset-reading-buttons button:active{opacity:.75}
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
 
-
-/* Typography based on the original Shiorune logo concept: upright book serif,
-   a restrained coral diamond at the i, without italics, highlights or rules. */
-.brand .brand-wordmark{display:inline-block;font-family:Georgia,"Times New Roman",serif;font-size:20px;font-style:normal;font-weight:500;letter-spacing:-.05em;line-height:1.05;white-space:nowrap;color:var(--fg)}
-.brand-wordmark .wordmark-i,.library-wordmark .wordmark-i{position:relative;display:inline-block}
-.brand-wordmark .wordmark-i::after,.library-wordmark .wordmark-i::after{content:"";position:absolute;width:.21em;height:.21em;top:.16em;left:.18em;background:#e07a6a;transform:rotate(45deg)}
-.library-intro h1.library-wordmark{font-family:Georgia,"Times New Roman",serif;font-size:34px;font-style:normal;font-weight:500;letter-spacing:-.045em;line-height:1.5;color:#293f49}
-@media(max-width:374px){.brand .brand-wordmark{font-size:18px}}
+/* Original Shiorune lettering traced from the approved logo image.
+   SVG mask uses the active theme's foreground; coral spark remains ornamental.
+   On browsers without CSS masking, show an ordinary accessible text label. */
+.brand .brand-wordmark{position:relative;display:inline-flex;align-items:center;justify-content:center;width:148px;height:36px;flex:0 0 148px;color:var(--fg);white-space:nowrap}
+.library-intro h1.library-wordmark{position:relative;display:flex;align-items:center;justify-content:center;width:min(230px,100%);height:56px;margin:0 auto;color:var(--fg);font-family:Georgia,serif;font-size:36px;font-style:normal;font-weight:500;letter-spacing:-.04em}
+.brand .wordmark-fallback,.library-wordmark .wordmark-fallback{display:inline-block;font-family:Georgia,serif;font-size:inherit;font-style:normal;font-weight:500;letter-spacing:-.04em}
+.brand .wordmark-fallback{font-size:19px}
+.brand .wordmark-lettering,.library-wordmark .wordmark-lettering,.brand .wordmark-spark,.library-wordmark .wordmark-spark{display:none}
+@supports ((mask-image:url("../wordmark.svg")) or (-webkit-mask-image:url("../wordmark.svg"))){
+  .brand .wordmark-fallback,.library-wordmark .wordmark-fallback{display:none}
+  .brand .wordmark-lettering,.library-wordmark .wordmark-lettering{display:block;position:absolute;inset:0;background:currentColor;-webkit-mask:url("../wordmark.svg") center/contain no-repeat;mask:url("../wordmark.svg") center/contain no-repeat}
+  .brand .wordmark-spark,.library-wordmark .wordmark-spark{display:block;position:absolute;left:29.6%;top:13.4%;width:5.1%;height:21.8%;background:#e07a6a;clip-path:polygon(50% 0,64% 34%,100% 50%,64% 66%,50% 100%,36% 66%,0 50%,36% 34%);pointer-events:none}
+}
+@media(max-width:374px){.brand .brand-wordmark{width:134px;flex-basis:134px;height:33px}}
