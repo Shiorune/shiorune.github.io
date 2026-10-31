@@ -59,6 +59,8 @@ jobs:
           python reader/test_build.py
           node --check reader/reader.js
           node reader/test_reset.js
+          node --check reader/migrate.js
+          node reader/test_import.js
 
       - name: Generate all published works and their episodes
         run: |
