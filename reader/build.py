@@ -288,18 +288,20 @@ def build() -> None:
             '<div class="work-hero-info"><p class="work-category">WEB NOVEL</p>'
             f'<h1>{html.escape(title)}</h1>'
             f'<div class="work-meta"><span>全{len(episodes)}話</span>'
-            '</div></div></div>'
-            '<div class="work-action-row">'
+            '</div></div></div></section>'
+        )
+        reading_actions = (
+            '<div class="work-action-row" aria-label="読む">'
             f'<a class="start-reading" href="{first_href}">第1話から読む <span aria-hidden="true">→</span></a>'
             '<a class="continue" id="continue-reading" hidden>続きを読む <span aria-hidden="true">→</span></a>'
             '<a class="open-episode-list" href="#episode-list-title">エピソード一覧を見る ↓</a>'
-            '</div></section>'
+            '</div>'
         )
         home = (
             '<div class="work-detail"><nav class="work-breadcrumb" aria-label="パンくずリスト">'
             '<a href="../../index.html">作品一覧</a><span aria-hidden="true"> / </span>'
             f'<span aria-current="page">{html.escape(title)}</span></nav>'
-            + hero + overview +
+            + hero + overview + reading_actions +
             '<section class="work-progress" aria-label="読書の進捗">'
             '<div class="work-progress-heading"><strong>読書の進捗</strong>'
             f'<span id="completed-count">0 / {len(episodes)}話 読了</span></div>'
