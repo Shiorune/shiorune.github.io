@@ -380,7 +380,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 @media(max-width:360px){.reset-reading-panel{padding:20px 16px 16px}}
 
 /* Approved A logo lettering, now only in the header. Keep the original
-   vector artwork and theme-aware text color, with a quieter 80px footprint. */
+   vector artwork and theme-aware text color, with a compact 68px footprint. */
 .brand .brand-wordmark{
   position:relative;
   display:inline-flex;
