@@ -5,6 +5,8 @@ html[data-theme="night"]{--bg:#20252b;--fg:#e9e8e5;--muted:#aaaeb6;--line:#43495
 html[data-theme="sky"]{--bg:#dceef5;--fg:#263944;--muted:#5a7180;--line:#bbd4e0;--accent:#375c6c}
 *{box-sizing:border-box}
 html{background:var(--bg);scroll-behavior:auto}
+/* Leave other pages untouched; avoid browser pull-to-refresh on reading pages. */
+html[data-episode="true"],body[data-episode="true"]{overscroll-behavior-y:none}
 body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:var(--ui-font);-webkit-text-size-adjust:100%;transition:background-color .15s ease,color .15s ease}
 button,input,select{font:inherit}
 a{color:inherit;text-decoration:none}

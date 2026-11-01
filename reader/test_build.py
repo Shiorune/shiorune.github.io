@@ -96,6 +96,7 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
                chapters["revalna"][0]).read_text(encoding="utf-8")
     assert 'id="chapter-list"' in ep_html
     assert 'id="open-toc"' in ep_html
+    assert '<html lang="ja" data-theme="paper" data-episode="true">' in ep_html
     assert 'id="chapter-filter"' not in ep_html
     # End-of-chapter controls are unobtrusive text links, never a swipe zone.
     assert 'class="episode-next-link"' in ep_html
@@ -107,6 +108,7 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'aria-current="page"' in ep_html
     assert '<nav class="chapter-nav"' not in ep_html
     home_html = (dest / "works" / "revalna" / "index.html").read_text(encoding="utf-8")
+    assert '<html lang="ja" data-theme="paper" data-episode="false">' in home_html
     assert '<details class="offline-tools">' in home_html
     assert 'class="work-hero"' in home_html
     assert 'class="start-reading"' in home_html
@@ -207,8 +209,8 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'localStorage.clear()' not in script
     assert 'localStorage.removeItem(KEY)' not in script
     assert "readerWidth" not in script
-    # Kakuyomu-style navigation is a second native page scroll at its bottom.
-    # There is no touch-only target or artificial extra scrolling region.
+    # Episode edges use ordinary reading content, never a dedicated swipe zone.
+    # Suppress browser pull-to-refresh only for a deliberate top-edge downward drag.
     assert 'el("episode-swipe-zone")' not in script
     assert 'episode-swipe-zone' not in css
     assert 'episode-swipe-chevrons' not in css
@@ -216,10 +218,14 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'document.addEventListener("touchmove"' in script
     assert 'document.addEventListener("touchcancel"' in script
     assert 'document.addEventListener("touchend"' in script
+    assert "const atPageTop = () =>" in script
     assert "const atPageBottom = () =>" in script
-    assert "!atPageBottom()" in script
-    assert 'upward < 95' in script
-    assert 'location.assign(nextChapter.href)' in script
+    assert '.episode-top-navigation .episode-prev-link' in script
+    assert "distance < 95" in script
+    assert "event.preventDefault()" in script
+    assert "{passive: false}" in script
+    assert "location.assign(destination.href)" in script
+    assert 'html[data-episode="true"],body[data-episode="true"]{overscroll-behavior-y:none}' in css
     assert 'cache.put(nextChapter.href, response.clone())' in script
     assert "connection?.saveData" in script
     assert ".episode-next-link{" in css

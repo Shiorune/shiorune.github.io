@@ -10,6 +10,7 @@ const end = source.indexOf("\n  } else {", start);
 assert(start >= 0 && end > start, "native chapter navigation must live in the episode branch");
 const behavior = source.slice(start, end);
 const targetHref = "https://shiorune.github.io/works/revalna/episodes/002.html";
+const previousHref = "https://shiorune.github.io/works/revalna/episodes/000.html";
 
 class FakeElement {
   constructor(kind = "reading") { this.kind = kind; }
@@ -23,13 +24,19 @@ class FakeElement {
 function harness(options = {}) {
   const handlers = new Map();
   const navigations = [], scheduled = [], fetched = [], cacheWrites = [];
-  let clock = 0, progressUpdates = 0;
+  let clock = 0, progressUpdates = 0, prevented = 0;
   const link = {href: targetHref};
+  const previousLink = {href: previousHref};
   const doc = {
     scrollingElement: {scrollHeight: 2000},
     documentElement: {scrollHeight: 2000},
+    querySelector(selector) {
+      assert.equal(selector, ".episode-top-navigation .episode-prev-link");
+      return options.noPrevious ? null : previousLink;
+    },
     addEventListener(name, listener, config) {
-      assert.equal(config.passive, true, "native page scroll must never be cancelled");
+      assert.equal(config.passive, name !== "touchmove",
+        "only top-edge touchmove may prevent browser pull-to-refresh");
       handlers.set(name, listener);
     }
   };
@@ -60,15 +67,23 @@ function harness(options = {}) {
   function touch(x, y, id = 1) {return {clientX:x,clientY:y,identifier:id};}
   function gesture({x0=180,y0=700,x1=180,y1=560,duration=240,
                     kind="reading",cancel=false,multi=false,
-                    bottomAtStart,bottomAtEnd} = {}) {
+                    topAtStart,topAtEnd,bottomAtStart,bottomAtEnd} = {}) {
     const original = context.scrollY;
-    if (bottomAtStart !== undefined) context.scrollY = bottomAtStart ? 1156 : 500;
+    if (topAtStart !== undefined) context.scrollY = topAtStart ? 0 : 500;
+    else if (bottomAtStart !== undefined) context.scrollY = bottomAtStart ? 1156 : 500;
     clock = 0;
     const initial = touch(x0,y0);
     const second = touch(220,660,2);
     const startTouches = multi ? [initial,second] : [initial];
     handlers.get("touchstart")?.({touches:startTouches,target:new FakeElement(kind)});
-    if (bottomAtEnd !== undefined) context.scrollY = bottomAtEnd ? 1156 : 500;
+    if (topAtEnd !== undefined) context.scrollY = topAtEnd ? 0 : 500;
+    else if (bottomAtEnd !== undefined) context.scrollY = bottomAtEnd ? 1156 : 500;
+    clock = duration / 2;
+    const middle = touch((x0+x1)/2,(y0+y1)/2);
+    handlers.get("touchmove")?.({
+      touches:multi ? [middle, second] : [middle], cancelable:true,
+      preventDefault() {prevented++;}
+    });
     clock = duration;
     if (cancel) handlers.get("touchcancel")?.({});
     handlers.get("touchend")?.({changedTouches:[touch(x1,y1)]});
@@ -76,7 +91,8 @@ function harness(options = {}) {
   }
   return {
     context, navigations, scheduled, fetched, cacheWrites, gesture, handlers,
-    get progressUpdates() {return progressUpdates;}
+    get progressUpdates() {return progressUpdates;},
+    get prevented() {return prevented;}
   };
 }
 
@@ -100,6 +116,50 @@ async function main() {
   assert.deepEqual(disabledButton.navigations,[],
     "settings/other interactive controls must not trigger episode navigation");
 
+  // A NEW downward pull from the document top opens the previous chapter.
+  const previous = harness({scrollY:0});
+  previous.gesture({y0:240,y1:380});
+  assert.deepEqual(previous.navigations,[previousHref]);
+  assert.equal(previous.progressUpdates,1);
+  assert.equal(previous.prevented,1,"block browser pull-to-refresh only at top");
+  const fromPreviousLink = harness({scrollY:0});
+  fromPreviousLink.gesture({kind:"link",y0:240,y1:380});
+  assert.deepEqual(fromPreviousLink.navigations,[previousHref]);
+  const prevTap = harness({scrollY:0});
+  prevTap.gesture({kind:"link",y0:240,y1:245});
+  assert.deepEqual(prevTap.navigations,[],"ordinary previous-link tap is untouched");
+  assert.equal(prevTap.prevented,0);
+  const noPrevious = harness({scrollY:0,noPrevious:true});
+  noPrevious.gesture({y0:240,y1:380});
+  assert.deepEqual(noPrevious.navigations,[],"first chapter must not navigate backward");
+  assert.equal(noPrevious.prevented,0);
+  const justReachedTop = harness({scrollY:500});
+  justReachedTop.gesture({y0:240,y1:380,topAtEnd:true});
+  assert.deepEqual(justReachedTop.navigations,[],
+    "reaching the top in the same drag is not enough");
+  const leftTop = harness({scrollY:0});
+  leftTop.gesture({y0:240,y1:380,topAtEnd:false});
+  assert.deepEqual(leftTop.navigations,[],
+    "must still be at top on touchend");
+  assert.equal(leftTop.prevented,0);
+  for (const params of [
+    {y0:240,y1:290}, {y0:380,y1:240},
+    {x0:180,x1:310,y0:240,y1:380},
+    {y0:240,y1:380,duration:40}, {y0:240,y1:380,duration:1800},
+    {y0:240,y1:380,cancel:true}, {y0:240,y1:380,multi:true},
+    {y0:240,y1:380,kind:"outside"}, {y0:240,y1:380,kind:"button"}
+  ]) {
+    const h = harness({scrollY:0});
+    h.gesture(params);
+    assert.deepEqual(h.navigations,[],"invalid top-edge gesture must not navigate");
+  }
+  const topOverlay = harness({scrollY:0,overlays:1});
+  topOverlay.gesture({y0:240,y1:380});
+  assert.deepEqual(topOverlay.navigations,[]);
+  assert.equal(topOverlay.prevented,0,"dialog must not have its scrolling prevented");
+  const withoutNeighbors = harness({noNext:true,noPrevious:true});
+  assert.equal(withoutNeighbors.handlers.size,0,"isolated episode needs no handlers");
+
   const unsafe = [
     [{y1:650},"short accidental movement"],
     [{y1:740},"downward / pull-to-refresh direction"],
@@ -121,7 +181,11 @@ async function main() {
   overlay.gesture();
   assert.deepEqual(overlay.navigations,[], "settings/TOC overlays block navigation");
   const last = harness({noNext:true});
-  assert.equal(last.handlers.size,0,"last chapter registers no gesture listeners");
+  last.gesture();
+  assert.deepEqual(last.navigations,[], "last chapter has no next scroll navigation");
+  const lastTop = harness({noNext:true,scrollY:0});
+  lastTop.gesture({y0:240,y1:380});
+  assert.deepEqual(lastTop.navigations,[previousHref], "last chapter can still navigate backward");
 
   const prefetch = harness();
   assert.equal(prefetch.scheduled.length,1,"one chapter scheduled for cache prefetch");
@@ -136,6 +200,6 @@ async function main() {
     const h = harness(options);
     assert.equal(h.scheduled.length,0,"no preload on slow/offline/data-saving connection");
   }
-  console.log("PASS: natural chapter-end scrolling incl. links, non-intercepted taps, overlays and prefetch");
+  console.log("PASS: bidirectional native chapter-edge gestures, refresh guard, taps, overlays and prefetch");
 }
 main().catch(err => {console.error(err);process.exitCode=1;});
