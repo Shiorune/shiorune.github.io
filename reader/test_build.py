@@ -133,7 +133,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'aria-label="読む"' in home_html
     assert 'class="start-reading"' in home_html
     assert 'id="continue-reading" hidden' in home_html
-    assert 'href="#episode-list-title"' in home_html
+    assert 'href="#episode-list-title"' not in home_html
+    assert 'エピソード一覧を見る' not in home_html
+    assert 'id="episode-list-title"' in home_html
     # Reset must be explicit, confirmed and scoped to this novel.
     assert 'id="reset-reading"' in home_html
     assert 'id="reset-reading-dialog"' in home_html
@@ -157,7 +159,7 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
 
     assert 'id="chapter-list"' not in home_html
     assert 'id="toc-filter"' not in home_html
-    assert 'class="open-episode-list"' in home_html
+    assert 'class="open-episode-list"' not in home_html
     assert '<div class="work-cover"' not in home_html
     assert 'class="work-card-cover"' not in home_html
     assert 'placeholder="話数・タイトルで探す"' not in home_html
@@ -271,7 +273,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".work-hero::after{" not in css
     assert ".work-action-row .start-reading{background:var(--fg);color:var(--bg);box-shadow:none}" in css
     assert ".work-action-row .continue{display:inline-flex;margin:0;background:transparent;color:var(--fg);border:1px solid var(--line)}" in css
-    assert ".open-episode-list{display:inline-flex" in css
+    assert ".open-episode-list" not in css
+    assert 'continuation.textContent = "続きから読む →";' in script
+    assert "次の話から読む" not in script
     assert "border:1px solid var(--line);color:var(--fg);background:transparent" in css
     assert "linear-gradient(130deg,#223949" not in css
     assert ".brand .brand-wordmark::after" in css
