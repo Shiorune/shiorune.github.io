@@ -242,34 +242,48 @@
     window.addEventListener("resize", updateProgress, {passive: true});
     updateProgress();
 
-    // An intentional upward gesture *inside the end-of-chapter target* moves
-    // to the next chapter. Never bind to document scrolling or top-edge pulls:
-    // those belong to the browser (refresh/history/navigation).
+    // Kakuyomu-style reader: ordinary page scrolling is left untouched.
+    // Only a fresh upward touch gesture that STARTS at the document bottom
+    // can open the next chapter. No special swipe region or touch capture.
     const nextChapter = el("episode-next-link");
-    const swipeZone = el("episode-swipe-zone");
-    if (nextChapter && swipeZone) {
-      let swipeStart = null;
-      swipeZone.addEventListener("pointerdown", event => {
-        if (event.pointerType !== "touch" || !event.isPrimary || openOverlays > 0) return;
-        const rect = swipeZone.getBoundingClientRect();
-        // The whole target must be on screen before accepting a gesture.
-        if (rect.top < 0 || rect.bottom > innerHeight + 2) return;
-        swipeStart = {id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now()};
-        try { swipeZone.setPointerCapture(event.pointerId); } catch {}
-      });
-      swipeZone.addEventListener("pointercancel", () => { swipeStart = null; });
-      swipeZone.addEventListener("pointerup", event => {
-        if (!swipeStart || event.pointerId !== swipeStart.id) return;
-        const start = swipeStart;
-        swipeStart = null;
-        if (openOverlays > 0) return;
-        const dx = event.clientX - start.x;
-        const dy = event.clientY - start.y;
+    if (nextChapter) {
+      let bottomGesture = null;
+      const atPageBottom = () => {
+        const scroller = document.scrollingElement || document.documentElement;
+        return scrollY >= scroller.scrollHeight - innerHeight - 12;
+      };
+      const isReadingSurface = target =>
+        target instanceof Element && !!target.closest(".reading-area") &&
+        !target.closest("a, button, input, textarea, select, summary, dialog, [contenteditable]");
+      const clearBottomGesture = () => { bottomGesture = null; };
+
+      document.addEventListener("touchstart", event => {
+        bottomGesture = null;
+        if (openOverlays > 0 || event.touches.length !== 1 ||
+            !atPageBottom() || !isReadingSurface(event.target)) return;
+        const touch = event.touches[0];
+        bottomGesture = {id: touch.identifier, x: touch.clientX, y: touch.clientY,
+                         time: performance.now()};
+      }, {passive: true});
+      document.addEventListener("touchmove", event => {
+        if (event.touches.length !== 1) clearBottomGesture();
+      }, {passive: true});
+      document.addEventListener("touchcancel", clearBottomGesture, {passive: true});
+      document.addEventListener("touchend", event => {
+        const start = bottomGesture;
+        clearBottomGesture();
+        if (!start || openOverlays > 0 || !atPageBottom()) return;
+        const touch = [...event.changedTouches].find(item => item.identifier === start.id);
+        if (!touch) return;
+        const upward = start.y - touch.clientY;
+        const sideways = Math.abs(touch.clientX - start.x);
         const duration = performance.now() - start.time;
-        if (dy > -70 || Math.abs(dx) > Math.abs(dy) * 0.5 || duration < 90 || duration > 1400) return;
+        // A deliberate second drag at the bottom, not momentum or a tap.
+        if (upward < 95 || sideways > upward * 0.65 ||
+            duration < 100 || duration > 1600) return;
         updateProgress();
         location.assign(nextChapter.href);
-      });
+      }, {passive: true});
 
       // Preload exactly one next chapter while idle. The service worker caches
       // visited chapters; explicitly store the prefetch for first-time visitors
