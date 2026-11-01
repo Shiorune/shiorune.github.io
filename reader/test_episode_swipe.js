@@ -15,7 +15,7 @@ class FakeElement {
   constructor(kind = "reading") { this.kind = kind; }
   closest(selector) {
     if (selector === ".reading-area") return this.kind === "outside" ? null : this;
-    if (selector.startsWith("a, button")) return this.kind === "link" ? this : null;
+    if (selector.startsWith("button, input")) return this.kind === "button" ? this : null;
     return null;
   }
 }
@@ -87,6 +87,18 @@ async function main() {
   assert.equal(valid.progressUpdates,1, "reading progress saved before moving");
   assert(!valid.handlers.has("pointerdown"), "no swipe zone or pointer capture used");
   assert(valid.handlers.has("touchstart"), "normal document touch gestures are observed");
+  const fromChapterLink = harness();
+  fromChapterLink.gesture({kind:"link"});
+  assert.deepEqual(fromChapterLink.navigations,[targetHref],
+    "swiping upward on the chapter-end link follows the same native scroll gesture");
+  const linkTap = harness();
+  linkTap.gesture({kind:"link",y1:690});
+  assert.deepEqual(linkTap.navigations,[],
+    "tapping the next chapter link is not intercepted; native href remains usable");
+  const disabledButton = harness();
+  disabledButton.gesture({kind:"button"});
+  assert.deepEqual(disabledButton.navigations,[],
+    "settings/other interactive controls must not trigger episode navigation");
 
   const unsafe = [
     [{y1:650},"short accidental movement"],
@@ -97,7 +109,6 @@ async function main() {
     [{cancel:true},"touch cancelled by browser"],
     [{multi:true},"multitouch"],
     [{kind:"outside"},"toolbar instead of reading content"],
-    [{kind:"link"},"click on next-link button"],
     [{bottomAtStart:false,bottomAtEnd:true},"merely reached the bottom while scrolling"],
     [{bottomAtStart:true,bottomAtEnd:false},"left the bottom during gesture"]
   ];
@@ -125,6 +136,6 @@ async function main() {
     const h = harness(options);
     assert.equal(h.scheduled.length,0,"no preload on slow/offline/data-saving connection");
   }
-  console.log("PASS: native bottom pull, unsafe gestures, overlays, final chapter and prefetch");
+  console.log("PASS: natural chapter-end scrolling incl. links, non-intercepted taps, overlays and prefetch");
 }
 main().catch(err => {console.error(err);process.exitCode=1;});
