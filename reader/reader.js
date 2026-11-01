@@ -242,52 +242,75 @@
     window.addEventListener("resize", updateProgress, {passive: true});
     updateProgress();
 
-    // Observe natural scroll gestures anywhere in the episode's reading area,
-    // including the normal next-episode link at the document bottom.
-    // Require a NEW upward gesture after reaching the bottom; simply arriving
-    // at the last paragraph must never navigate. No dedicated swipe zone.
+    // Observe ordinary scroll gestures over the episode reading area and links.
+    // A NEW gesture must start at the top/bottom edge: arriving there is not enough.
+    // There is no dedicated swipe zone; normal taps and scrolling remain native.
     const nextChapter = el("episode-next-link");
-    if (nextChapter) {
-      let bottomGesture = null;
+    const previousChapter = document.querySelector(".episode-top-navigation .episode-prev-link");
+    if (nextChapter || previousChapter) {
+      let edgeGesture = null;
+      const atPageTop = () => scrollY <= 12;
       const atPageBottom = () => {
         const scroller = document.scrollingElement || document.documentElement;
         return scrollY >= scroller.scrollHeight - innerHeight - 12;
       };
       const isReadingSurface = target =>
         target instanceof Element && !!target.closest(".reading-area") &&
-        // Normal links at the end may start a drag; a tap still follows href.
         !target.closest("button, input, textarea, select, summary, dialog, [contenteditable]");
-      const clearBottomGesture = () => { bottomGesture = null; };
+      const clearEdgeGesture = () => { edgeGesture = null; };
 
       document.addEventListener("touchstart", event => {
-        bottomGesture = null;
+        clearEdgeGesture();
         if (openOverlays > 0 || event.touches.length !== 1 ||
-            !atPageBottom() || !isReadingSurface(event.target)) return;
+            !isReadingSurface(event.target)) return;
+        const top = !!previousChapter && atPageTop();
+        const bottom = !!nextChapter && atPageBottom();
+        if (!top && !bottom) return;
         const touch = event.touches[0];
-        bottomGesture = {id: touch.identifier, x: touch.clientX, y: touch.clientY,
-                         time: performance.now()};
+        edgeGesture = {id: touch.identifier, x: touch.clientX, y: touch.clientY,
+                       time: performance.now(), top, bottom};
       }, {passive: true});
       document.addEventListener("touchmove", event => {
-        if (event.touches.length !== 1) clearBottomGesture();
-      }, {passive: true});
-      document.addEventListener("touchcancel", clearBottomGesture, {passive: true});
+        const start = edgeGesture;
+        if (!start) return;
+        if (event.touches.length !== 1) { clearEdgeGesture(); return; }
+        const touch = event.touches[0];
+        if (touch.identifier !== start.id) { clearEdgeGesture(); return; }
+        // Only suppress native pull-to-refresh for an intentional downward
+        // gesture that began at the top. Never block ordinary page scrolling.
+        // overscroll-behavior in CSS handles compatible browsers; this also
+        // helps when the browser does not honor that property (e.g. Safari).
+        if (!start.top || !atPageTop() || openOverlays > 0) return;
+        const downward = touch.clientY - start.y;
+        const sideways = Math.abs(touch.clientX - start.x);
+        if (downward > 8 && sideways <= downward * 0.65 && event.cancelable) {
+          event.preventDefault();
+        }
+      }, {passive: false});
+      document.addEventListener("touchcancel", clearEdgeGesture, {passive: true});
       document.addEventListener("touchend", event => {
-        const start = bottomGesture;
-        clearBottomGesture();
-        if (!start || openOverlays > 0 || !atPageBottom()) return;
+        const start = edgeGesture;
+        clearEdgeGesture();
+        if (!start || openOverlays > 0) return;
         const touch = Array.from(event.changedTouches).find(item => item.identifier === start.id);
         if (!touch) return;
-        const upward = start.y - touch.clientY;
+        const vertical = start.y - touch.clientY;
+        const distance = Math.abs(vertical);
         const sideways = Math.abs(touch.clientX - start.x);
         const duration = performance.now() - start.time;
-        // Native scroll already consumed the first gesture. This separate
-        // bottom-starting drag must be long enough to rule out taps and inertia.
-        if (upward < 95 || sideways > upward * 0.65 ||
+        if (distance < 95 || sideways > distance * 0.65 ||
             duration < 100 || duration > 1600) return;
+        const destination = vertical > 0 && start.bottom && nextChapter && atPageBottom()
+          ? nextChapter
+          : vertical < 0 && start.top && previousChapter && atPageTop()
+            ? previousChapter : null;
+        if (!destination) return;
         updateProgress();
-        location.assign(nextChapter.href);
+        location.assign(destination.href);
       }, {passive: true});
+    }
 
+    if (nextChapter) {
       // Preload exactly one next chapter while idle. The service worker caches
       // visited chapters; explicitly store the prefetch for first-time visitors
       // before the service worker takes control. Respect metered connections.
