@@ -67,8 +67,8 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
                 assert '<nav class="episode-top-navigation"' not in page_html
             if i + 1 < len(ordered):
                 assert f'id="episode-next-link" href="{ordered[i + 1]}" rel="next"' in page_html
-                assert 'id="episode-swipe-zone"' in page_html
-                assert 'ここを上にスワイプして次の話へ' in page_html
+                assert 'id="episode-swipe-zone"' not in page_html
+                assert 'ここを上にスワイプして次の話へ' not in page_html
             else:
                 assert 'id="episode-next-link"' not in page_html
                 assert 'id="episode-swipe-zone"' not in page_html
@@ -203,19 +203,21 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'localStorage.clear()' not in script
     assert 'localStorage.removeItem(KEY)' not in script
     assert "readerWidth" not in script
-    # Swipe handling must remain scoped to the page-end target, not the document.
-    assert 'el("episode-swipe-zone")' in script
-    assert 'swipeZone.addEventListener("pointerdown"' in script
-    assert 'swipeZone.addEventListener("pointercancel"' in script
-    assert 'swipeZone.addEventListener("pointerup"' in script
-    assert 'event.pointerType !== "touch"' in script
-    assert 'event.isPrimary' in script
-    assert 'dy > -70' in script
+    # Kakuyomu-style navigation is a second native page scroll at its bottom.
+    # There is no touch-only target or artificial extra scrolling region.
+    assert 'el("episode-swipe-zone")' not in script
+    assert 'episode-swipe-zone' not in css
+    assert 'episode-swipe-chevrons' not in css
+    assert 'document.addEventListener("touchstart"' in script
+    assert 'document.addEventListener("touchmove"' in script
+    assert 'document.addEventListener("touchcancel"' in script
+    assert 'document.addEventListener("touchend"' in script
+    assert "const atPageBottom = () =>" in script
+    assert "!atPageBottom()" in script
+    assert 'upward < 95' in script
     assert 'location.assign(nextChapter.href)' in script
     assert 'cache.put(nextChapter.href, response.clone())' in script
     assert "connection?.saveData" in script
-    assert ".episode-swipe-zone{" in css
-    assert "touch-action:pinch-zoom" in css
     assert ".episode-next-link{" in css
     assert ".episode-prev-link{" in css
     assert "if (scrollY >= 140) {" in script
