@@ -316,7 +316,6 @@ def build() -> None:
             '<div class="work-action-row" aria-label="読む">'
             f'<a class="start-reading" href="{first_href}">第1話から読む <span aria-hidden="true">→</span></a>'
             '<a class="continue" id="continue-reading" hidden>続きを読む <span aria-hidden="true">→</span></a>'
-            '<a class="open-episode-list" href="#episode-list-title">エピソード一覧を見る ↓</a>'
             '</div>'
         )
         home = (
