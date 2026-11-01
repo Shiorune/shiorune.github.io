@@ -1,8 +1,10 @@
 name: Publish Shiorune reader
 
-# Explicit only. Updating the private source repository never triggers this workflow.
+# One-shot public release of previous-episode navigation. Restore manual-only after successful publish.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
