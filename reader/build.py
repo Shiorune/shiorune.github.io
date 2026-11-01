@@ -155,7 +155,7 @@ def document(title: str, body: str, *, asset_prefix: str, is_episode: bool, toc_
                   '<p class="toc-panel-back"><a href="../index.html">作品の目次ページへ</a></p></div></dialog>'
                   if is_episode else "")
     return f'''<!doctype html>
-<html lang="ja" data-theme="paper" data-episode="{\'true\' if is_episode else \'false\'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="ja" data-theme="paper" data-episode="{'true' if is_episode else 'false'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4edde"><meta name="app-root" content="{asset_prefix}"><meta name="description" content="Shiorune 小説リーダー">
 <link rel="manifest" href="{asset_prefix}manifest.webmanifest"><link rel="icon" href="{asset_prefix}icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{asset_prefix}assets/reader.css"><title>{html.escape(title)} - {TITLE}</title></head>
