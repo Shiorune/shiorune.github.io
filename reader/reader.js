@@ -382,8 +382,7 @@
             const target = previousProgress?.finished ? entries[index + 1] : entries[index];
             if (target) {
               continuation.href = target.href;
-              continuation.textContent = previousProgress?.finished
-                ? "次の話から読む →" : "続きから読む →";
+              continuation.textContent = "続きから読む →";
               continuation.hidden = false;
             }
           }
