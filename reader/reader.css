@@ -355,15 +355,13 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 .synopsis-expander[open] .synopsis-toggle{font-size:0}
 .synopsis-expander[open] .synopsis-toggle::after{content:"閉じる ↑";font-size:12px}
 .synopsis-expander .synopsis-full{margin:5px 0 0;line-height:1.75;white-space:pre-line}
-.open-episode-list{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;border:1px solid var(--line);color:var(--fg);background:transparent;border-radius:10px;font-size:13px;font-weight:700;padding:11px 15px}
-.open-episode-list:hover,.open-episode-list:focus-visible{background:color-mix(in srgb,var(--fg) 6%,var(--bg))}
 .work-hero-main{display:block}
 .work-hero-info{width:100%}
 .work-hero{min-height:0}
 .work-hero h1{max-width:100%;font-size:clamp(22px,5vw,32px)}
 .shiorune-library .work-card{gap:13px}
 .shiorune-library .work-card-details{align-items:start}
-@media(max-width:540px){.work-hero h1{font-size:clamp(20px,5.6vw,27px)}.work-action-row{gap:8px}.open-episode-list{flex:1 1 155px}}
+@media(max-width:540px){.work-hero h1{font-size:clamp(20px,5.6vw,27px)}.work-action-row{gap:8px}}
 
 
 /* Per-work reading status reset is deliberately secondary to starting/continuing. */
