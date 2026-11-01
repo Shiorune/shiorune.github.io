@@ -230,6 +230,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'html[data-episode="true"],body[data-episode="true"]{overscroll-behavior-y:none}' in css
     assert 'cache.put(nextChapter.href, response.clone())' in script
     assert "connection?.saveData" in script
+    assert ".episode-end-navigation{margin-top:42px;padding-top:15px;border-top:1px solid var(--line)}" in css
+    assert "  .episode-end-navigation{margin-top:36px;padding-top:11px}" in css
+    assert 'body[data-episode="true"] .reading-area{padding-bottom:max(20px,env(safe-area-inset-bottom))}' in css
     assert ".episode-next-link{" in css
     assert ".episode-prev-link{" in css
     assert "if (scrollY >= 140) {" in script
