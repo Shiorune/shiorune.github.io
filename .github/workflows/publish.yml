@@ -1,8 +1,10 @@
 name: Publish Shiorune reader
 
-# Explicit only. Updating the private source repository never triggers this workflow.
+# One-time publish for episode-end spacing; restore manual-only after success.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
