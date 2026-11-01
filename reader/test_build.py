@@ -97,6 +97,10 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert 'id="chapter-list"' in ep_html
     assert 'id="open-toc"' in ep_html
     assert 'id="chapter-filter"' not in ep_html
+    # End-of-chapter controls are unobtrusive text links, never a swipe zone.
+    assert 'class="episode-next-link"' in ep_html
+    assert 'id="episode-swipe-zone"' not in ep_html
+    assert 'ここを上にスワイプして次の話へ' not in ep_html
     assert '話数・タイトルで検索' not in ep_html
     assert 'href="../index.html"' in ep_html
     assert 'class="toc-trigger"' in ep_html
@@ -231,6 +235,9 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".brand img{" in css
     assert ".brand .brand-wordmark{" in css
     assert "wordmark-a.svg" in css
+    assert ".episode-next-link{display:inline-flex;" in css
+    assert "border:0;border-radius:0;background:transparent;color:var(--fg)" in css
+    assert "background:color-mix(in srgb,var(--fg) 6%,var(--bg));border:1px" not in css
     assert "color:var(--brand-ink,var(--fg));" in css
     assert 'root.style.setProperty("--brand-ink", isDark ? "#f3f0eb" : "#082c54")' in script
     assert 'mask:url("../wordmark-a.svg") center/100% 100% no-repeat' in css

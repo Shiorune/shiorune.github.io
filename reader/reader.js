@@ -242,9 +242,10 @@
     window.addEventListener("resize", updateProgress, {passive: true});
     updateProgress();
 
-    // Kakuyomu-style reader: ordinary page scrolling is left untouched.
-    // Only a fresh upward touch gesture that STARTS at the document bottom
-    // can open the next chapter. No special swipe region or touch capture.
+    // Observe natural scroll gestures anywhere in the episode's reading area,
+    // including the normal next-episode link at the document bottom.
+    // Require a NEW upward gesture after reaching the bottom; simply arriving
+    // at the last paragraph must never navigate. No dedicated swipe zone.
     const nextChapter = el("episode-next-link");
     if (nextChapter) {
       let bottomGesture = null;
@@ -254,7 +255,8 @@
       };
       const isReadingSurface = target =>
         target instanceof Element && !!target.closest(".reading-area") &&
-        !target.closest("a, button, input, textarea, select, summary, dialog, [contenteditable]");
+        // Normal links at the end may start a drag; a tap still follows href.
+        !target.closest("button, input, textarea, select, summary, dialog, [contenteditable]");
       const clearBottomGesture = () => { bottomGesture = null; };
 
       document.addEventListener("touchstart", event => {
@@ -278,7 +280,8 @@
         const upward = start.y - touch.clientY;
         const sideways = Math.abs(touch.clientX - start.x);
         const duration = performance.now() - start.time;
-        // A deliberate second drag at the bottom, not momentum or a tap.
+        // Native scroll already consumed the first gesture. This separate
+        // bottom-starting drag must be long enough to rule out taps and inertia.
         if (upward < 95 || sideways > upward * 0.65 ||
             duration < 100 || duration > 1600) return;
         updateProgress();
