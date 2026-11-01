@@ -1,10 +1,8 @@
 name: Publish Shiorune reader
 
-# Temporary one-shot public release of streamlined work page; restore manual-only afterward.
+# Explicit only. Updating the private source repository never triggers this workflow.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
