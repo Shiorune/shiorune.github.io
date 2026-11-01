@@ -4,107 +4,127 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const source = fs.readFileSync(require("node:path").join(__dirname, "reader.js"), "utf8");
 
-// Exercise the actual handler code with simulated browser pointer events.
+// Execute the real end-of-page touch handlers, not a reimplementation.
 const start = source.indexOf('    const nextChapter = el("episode-next-link");');
 const end = source.indexOf("\n  } else {", start);
-assert(start >= 0 && end > start, "chapter swipe code must remain in the episode branch");
+assert(start >= 0 && end > start, "native chapter navigation must live in the episode branch");
 const behavior = source.slice(start, end);
 const targetHref = "https://shiorune.github.io/works/revalna/episodes/002.html";
+
+class FakeElement {
+  constructor(kind = "reading") { this.kind = kind; }
+  closest(selector) {
+    if (selector === ".reading-area") return this.kind === "outside" ? null : this;
+    if (selector.startsWith("a, button")) return this.kind === "link" ? this : null;
+    return null;
+  }
+}
 
 function harness(options = {}) {
   const handlers = new Map();
   const navigations = [], scheduled = [], fetched = [], cacheWrites = [];
-  const swipeZone = {
-    addEventListener(name, listener) { handlers.set(name, listener); },
-    getBoundingClientRect() { return options.rect || {top: 660, bottom: 770}; },
-    setPointerCapture(id) { assert.equal(typeof id, "number"); }
-  };
-  const link = {href: targetHref};
   let clock = 0, progressUpdates = 0;
+  const link = {href: targetHref};
+  const doc = {
+    scrollingElement: {scrollHeight: 2000},
+    documentElement: {scrollHeight: 2000},
+    addEventListener(name, listener, config) {
+      assert.equal(config.passive, true, "native page scroll must never be cancelled");
+      handlers.set(name, listener);
+    }
+  };
   const context = {
-    el(id) { return options.noNext ? null : (id === "episode-next-link" ? link :
-      id === "episode-swipe-zone" ? swipeZone : null); },
-    openOverlays: options.overlays || 0,
+    Element: FakeElement,
+    document: doc,
     innerHeight: 844,
-    performance: {now() { return clock; }},
-    navigator: {onLine: options.offline ? false : true, connection: options.connection || {}},
-    location: {assign(url) { navigations.push(url); }},
-    updateProgress() { progressUpdates++; },
+    scrollY: options.scrollY === undefined ? 1156 : options.scrollY,
+    el(id) { return id === "episode-next-link" && !options.noNext ? link : null; },
+    openOverlays: options.overlays || 0,
+    performance: {now() {return clock;}},
+    navigator: {onLine: !options.offline, connection: options.connection || {}},
+    location: {assign(url) {navigations.push(url);}},
+    updateProgress() {progressUpdates++;},
     fetch: async url => {
       fetched.push(url);
-      return {ok: true, type: "basic", clone() { return {copy: true}; }};
+      return {ok:true, type:"basic", clone() {return {copy:true};}};
     },
-    caches: {
-      async open(name) {
-        assert.equal(name, "velune-episodes-v1");
-        return {async put(url, response) { cacheWrites.push([url, response]); }};
-      }
-    },
-    window: {requestIdleCallback: true, caches: true},
-    requestIdleCallback(fn) { scheduled.push(fn); },
-    setTimeout() { throw Error("idle callback should be used"); }
+    caches: {async open(name) {
+      assert.equal(name, "velune-episodes-v1");
+      return {async put(url, response) {cacheWrites.push([url,response]);}};
+    }},
+    window: {requestIdleCallback:true, caches:true},
+    requestIdleCallback(fn) {scheduled.push(fn);},
+    setTimeout() {throw Error("unexpected fallback timer");}
   };
   vm.runInNewContext(behavior, context);
-  function fire(name, {x = 180, y = 730, id = 1, type = "touch", primary = true} = {}) {
-    handlers.get(name)?.({clientX:x, clientY:y, pointerId:id, pointerType:type, isPrimary:primary});
-  }
-  function gesture({x0 = 180, y0 = 720, x1 = 180, y1 = 620, duration = 200,
-    type = "touch", primary = true, cancel = false} = {}) {
+  function touch(x, y, id = 1) {return {clientX:x,clientY:y,identifier:id};}
+  function gesture({x0=180,y0=700,x1=180,y1=560,duration=240,
+                    kind="reading",cancel=false,multi=false,
+                    bottomAtStart,bottomAtEnd} = {}) {
+    const original = context.scrollY;
+    if (bottomAtStart !== undefined) context.scrollY = bottomAtStart ? 1156 : 500;
     clock = 0;
-    fire("pointerdown", {x:x0,y:y0,type,primary});
+    const initial = touch(x0,y0);
+    const second = touch(220,660,2);
+    const startTouches = multi ? [initial,second] : [initial];
+    handlers.get("touchstart")?.({touches:startTouches,target:new FakeElement(kind)});
+    if (bottomAtEnd !== undefined) context.scrollY = bottomAtEnd ? 1156 : 500;
     clock = duration;
-    if (cancel) fire("pointercancel");
-    fire("pointerup", {x:x1,y:y1,type,primary});
+    if (cancel) handlers.get("touchcancel")?.({});
+    handlers.get("touchend")?.({changedTouches:[touch(x1,y1)]});
+    context.scrollY = original;
   }
   return {
-    context, navigations, scheduled, fetched, cacheWrites, gesture,
-    get progressUpdates() {return progressUpdates;},
-    handlers
+    context, navigations, scheduled, fetched, cacheWrites, gesture, handlers,
+    get progressUpdates() {return progressUpdates;}
   };
 }
-async function main() {
-  const ok = harness();
-  ok.gesture();
-  assert.deepEqual(ok.navigations, [targetHref], "intentional upward swipe navigates once");
-  assert.equal(ok.progressUpdates, 1, "commit reading progress before navigating");
 
-  for (const bad of [
-    {y1:680},                   // short, accidental swipe
-    {y1:780},                   // downward pull / browser refresh direction
-    {x1:280},                   // horizontal browser history/back swipe
-    {type:"mouse"},            // mouse dragging is not a swipe
-    {primary:false},           // two-finger input
-    {duration:40},             // abrupt accidental tap motion
-    {duration:2000},           // very slow scroll/press
-    {cancel:true}              // gesture taken over by the browser
-  ]) {
-    const t = harness();
-    t.gesture(bad);
-    assert.deepEqual(t.navigations, [], "unsafe gesture must not navigate: " + JSON.stringify(bad));
+async function main() {
+  const valid = harness();
+  valid.gesture();
+  assert.deepEqual(valid.navigations,[targetHref], "a second upward swipe from the bottom navigates");
+  assert.equal(valid.progressUpdates,1, "reading progress saved before moving");
+  assert(!valid.handlers.has("pointerdown"), "no swipe zone or pointer capture used");
+  assert(valid.handlers.has("touchstart"), "normal document touch gestures are observed");
+
+  const unsafe = [
+    [{y1:650},"short accidental movement"],
+    [{y1:740},"downward / pull-to-refresh direction"],
+    [{x1:310},"sideways / history navigation gesture"],
+    [{duration:40},"too fast"],
+    [{duration:1800},"long press"],
+    [{cancel:true},"touch cancelled by browser"],
+    [{multi:true},"multitouch"],
+    [{kind:"outside"},"toolbar instead of reading content"],
+    [{kind:"link"},"click on next-link button"],
+    [{bottomAtStart:false,bottomAtEnd:true},"merely reached the bottom while scrolling"],
+    [{bottomAtStart:true,bottomAtEnd:false},"left the bottom during gesture"]
+  ];
+  for (const [params, label] of unsafe) {
+    const h = harness();
+    h.gesture(params);
+    assert.deepEqual(h.navigations,[], "must not navigate: "+label);
   }
-  const obscured = harness({rect:{top:720,bottom:950}});
-  obscured.gesture();
-  assert.deepEqual(obscured.navigations, [], "partially hidden rail does not navigate");
-  const modal = harness({overlays:1});
-  modal.gesture();
-  assert.deepEqual(modal.navigations, [], "overlay blocks chapter gesture");
+  const overlay = harness({overlays:1});
+  overlay.gesture();
+  assert.deepEqual(overlay.navigations,[], "settings/TOC overlays block navigation");
   const last = harness({noNext:true});
-  assert.equal(last.handlers.size, 0, "last chapter cannot register a next swipe");
+  assert.equal(last.handlers.size,0,"last chapter registers no gesture listeners");
 
   const prefetch = harness();
-  assert.equal(prefetch.scheduled.length, 1, "one next chapter queued during idle");
+  assert.equal(prefetch.scheduled.length,1,"one chapter scheduled for cache prefetch");
   prefetch.scheduled[0]();
   await new Promise(resolve => setImmediate(resolve));
-  assert.deepEqual(prefetch.fetched, [targetHref]);
-  assert.equal(prefetch.cacheWrites.length, 1);
-  assert.equal(prefetch.cacheWrites[0][0], targetHref);
+  assert.deepEqual(prefetch.fetched,[targetHref]);
+  assert.equal(prefetch.cacheWrites.length,1);
+  assert.equal(prefetch.cacheWrites[0][0],targetHref);
 
   for (const options of [{offline:true},{connection:{saveData:true}},
-    {connection:{effectiveType:"2g"}}]) {
+                         {connection:{effectiveType:"2g"}}]) {
     const h = harness(options);
-    assert.equal(h.scheduled.length, 0, "do not fetch on slow/offline/data-saver");
-    assert.equal(h.cacheWrites.length, 0);
+    assert.equal(h.scheduled.length,0,"no preload on slow/offline/data-saving connection");
   }
-  console.log("PASS: swipe safety, browser gestures, modal/boundary, tap fallback and single-chapter prefetch");
+  console.log("PASS: native bottom pull, unsafe gestures, overlays, final chapter and prefetch");
 }
-main().catch(err => {console.error(err); process.exitCode=1;});
+main().catch(err => {console.error(err);process.exitCode=1;});
