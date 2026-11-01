@@ -276,7 +276,7 @@ def check_build(source: Path, dest: Path, chapters: dict[str, list[str]]) -> Non
     assert ".open-episode-list" not in css
     assert 'continuation.textContent = "続きから読む →";' in script
     assert "次の話から読む" not in script
-    assert "border:1px solid var(--line);color:var(--fg);background:transparent" in css
+    assert "@media(max-width:540px){.work-hero h1{font-size:clamp(20px,5.6vw,27px)}.work-action-row{gap:8px}}" in css
     assert "linear-gradient(130deg,#223949" not in css
     assert ".brand .brand-wordmark::after" in css
     assert "background:#e07a6a;" in css
