@@ -431,7 +431,7 @@ body.reader-overlay-open{position:fixed;left:0;right:0;width:100%;overflow:hidde
 }
 
 
-/* Navigation only after the text: browser scroll/pull-to-refresh elsewhere is native. */
+/* Light chapter-end links; native scrolling works everywhere on the page. */
 body[data-episode="true"] .reading-area{padding-bottom:max(20px,env(safe-area-inset-bottom))}
 .episode-top-navigation,.episode-end-navigation{max-width:680px;margin-left:auto;margin-right:auto;font-family:var(--ui-font)}
 .episode-top-navigation{display:flex;justify-content:flex-start;margin-bottom:8px}
@@ -444,13 +444,10 @@ body[data-episode="true"] .reading-area{padding-bottom:max(20px,env(safe-area-in
 .episode-next-link strong{font-size:13px;line-height:1.55;font-weight:650;overflow-wrap:anywhere;min-width:0}
 .episode-next-link>span:last-child{font-size:18px;color:var(--accent)}
 .episode-prev-link:active,.episode-next-link:active{opacity:.72}
-.episode-swipe-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:104px;margin-top:13px;border:1px dashed color-mix(in srgb,var(--fg) 21%,transparent);border-radius:12px;background:color-mix(in srgb,var(--fg) 3%,var(--bg));color:var(--muted);font-size:12px;font-weight:600;text-align:center;user-select:none;-webkit-user-select:none;touch-action:pinch-zoom}
-.episode-swipe-chevrons{display:block;font-size:19px;line-height:1;color:var(--accent);transform:rotate(0deg)}
 @media(max-width:540px){
   .episode-end-navigation{margin-top:17px;padding-top:11px}
   .episode-end-links{gap:7px}
   .episode-prev-link{padding:8px 9px;font-size:12px}
   .episode-next-link{min-height:55px;padding:8px 10px}
   .episode-next-link strong{font-size:12px}
-  .episode-swipe-zone{min-height:100px;margin-top:11px}
 }

@@ -263,21 +263,13 @@ def build() -> None:
                 '<strong>' + html.escape(next_ep["name"]) + '</strong><span aria-hidden="true">→</span></a>'
                 if next_ep else ''
             )
-            swipe_zone = (
-                '<div class="episode-swipe-zone" id="episode-swipe-zone"'
-                ' aria-label="ここを上にスワイプすると次の話へ進みます">'
-                '<span aria-hidden="true" class="episode-swipe-chevrons">⌃⌃</span>'
-                '<span>ここを上にスワイプして次の話へ</span></div>'
-                if next_ep else ''
-            )
             chapter_top = (
                 '<nav class="episode-top-navigation" aria-label="前の話">' + previous_link + '</nav>'
                 if previous_ep else ''
             )
             chapter_bottom = (
                 '<nav class="episode-end-navigation" aria-label="エピソードの移動">'
-                '<div class="episode-end-links">' + previous_link + next_link + '</div>'
-                + swipe_zone + '</nav>'
+                '<div class="episode-end-links">' + previous_link + next_link + '</div></nav>'
             )
             body = chapter_top + f'<article class="prose">{ep["html"]}</article>' + chapter_bottom
             page = document(ep["name"], body, asset_prefix="../../../",

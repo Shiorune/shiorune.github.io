@@ -3,6 +3,10 @@ name: Publish Shiorune reader
 # Explicit only. Updating the private source repository never triggers this workflow.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'reader/**'
 
 permissions:
   contents: read
@@ -59,6 +63,7 @@ jobs:
           python reader/test_build.py
           node --check reader/reader.js
           node reader/test_reset.js
+          node reader/test_episode_swipe.js
 
       - name: Generate all published works and their episodes
         run: |
