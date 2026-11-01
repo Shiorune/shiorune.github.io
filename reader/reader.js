@@ -273,7 +273,7 @@
         const start = bottomGesture;
         clearBottomGesture();
         if (!start || openOverlays > 0 || !atPageBottom()) return;
-        const touch = [...event.changedTouches].find(item => item.identifier === start.id);
+        const touch = Array.from(event.changedTouches).find(item => item.identifier === start.id);
         if (!touch) return;
         const upward = start.y - touch.clientY;
         const sideways = Math.abs(touch.clientX - start.x);
