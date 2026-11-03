@@ -4,8 +4,6 @@ name: Publish Shiorune reader
 # No push trigger: individual manuscript commits do not launch CI.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
   schedule:
     - cron: '37 */4 * * *' # UTC; avoid the busy start of each hour
 
