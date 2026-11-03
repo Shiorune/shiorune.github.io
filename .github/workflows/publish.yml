@@ -1,8 +1,11 @@
 name: Publish Shiorune reader
 
-# Explicit only. Updating the private source repository never triggers this workflow.
+# Publish at most once per four-hour window, and only after content changed.
+# No push trigger: individual manuscript commits do not launch CI.
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '37 */4 * * *' # UTC; avoid the busy start of each hour
 
 permissions:
   contents: read
@@ -45,23 +48,50 @@ jobs:
             works
           sparse-checkout-cone-mode: true
 
+      - name: Check for unpublished updates
+        id: revision
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          SOURCE_TREE="$(git -C _source rev-parse HEAD:works)"
+          READER_TREE="$(git rev-parse HEAD:reader)"
+          echo "source_tree=$SOURCE_TREE" >> "$GITHUB_OUTPUT"
+          echo "reader_tree=$READER_TREE" >> "$GITHUB_OUTPUT"
+          if [ "$EVENT_NAME" != "workflow_dispatch" ] &&
+             curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' \
+               "https://shiorune.github.io/publication-revision.json?run=${GITHUB_RUN_ID}" \
+               -o "$RUNNER_TEMP/publication-revision.json" &&
+             python3 reader/publication_revision.py check "$RUNNER_TEMP/publication-revision.json" \
+               "$SOURCE_TREE" "$READER_TREE"; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to published sources. Skipping CI and deploy."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "New source or reader revision. Running CI and deploy."
+          fi
+
       - name: Set up Python
+        if: steps.revision.outputs.publish == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
 
       - name: Install generator dependencies
+        if: steps.revision.outputs.publish == 'true'
         run: python -m pip install -r requirements.txt
 
       - name: Test novel-only build and exclusions
+        if: steps.revision.outputs.publish == 'true'
         run: |
+          python reader/test_publication_revision.py
           python reader/test_build.py
           node --check reader/reader.js
           node reader/test_reset.js
           node reader/test_episode_swipe.js
 
       - name: Generate all published works and their episodes
+        if: steps.revision.outputs.publish == 'true'
         run: |
           python reader/build.py
           test -f dist/index.html
@@ -72,14 +102,24 @@ jobs:
             exit 1
           fi
 
+      - name: Record successful-publication fingerprint
+        if: steps.revision.outputs.publish == 'true'
+        env:
+          SOURCE_TREE: ${{ steps.revision.outputs.source_tree }}
+          READER_TREE: ${{ steps.revision.outputs.reader_tree }}
+        run: python3 reader/publication_revision.py write dist/publication-revision.json "$SOURCE_TREE" "$READER_TREE"
+
       - name: Configure GitHub Pages
+        if: steps.revision.outputs.publish == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload ONLY the generated public pages
+        if: steps.revision.outputs.publish == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
       - name: Deploy to GitHub Pages
+        if: steps.revision.outputs.publish == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
