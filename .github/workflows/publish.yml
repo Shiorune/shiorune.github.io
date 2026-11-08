@@ -1,11 +1,8 @@
 name: Publish Shiorune reader
 
-# Publish at most once per four-hour window, and only after content changed.
-# No push trigger: individual manuscript commits do not launch CI.
+# Manual publishing only. Editing the private source never triggers CI or deployment.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '37 */4 * * *' # UTC; avoid the busy start of each hour
 
 permissions:
   contents: read
