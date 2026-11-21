@@ -3,6 +3,8 @@ name: Publish Shiorune reader
 # Manual publishing only. Editing the private source never triggers CI or deployment.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
